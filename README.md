@@ -3,7 +3,7 @@ Xây dựng một hệ thống quản lý quán cafe đơn giản-chính xác-d�
 ## Thành viên nhóm
 | STT | Họ và tên | MSSV | Vai trò trong nhóm |
 |:--:|:----------------|:--------:|:-------------------|
-| 1 | Nguyễn Anh Thư | 24S1020077 | Admin |
-| 2 | Đường Minh Anh | 24S1020003 | Developer |  
-| 3 | Trần Phương Anh | 24S1020009 | Developer |
-| 4 | Phạm Huy Khôi | 24S1020033 | Developer |
+| 1 | Nguyễn Anh Thư | 24S1020077 | Nhóm trưởng |
+| 2 | Đường Minh Anh | 24S1020003 | Thành viên |  
+| 3 | Trần Phương Anh | 24S1020009 | Thành viên |
+| 4 | Phạm Huy Khôi | 24S1020033 | Thành viên |
