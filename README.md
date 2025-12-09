@@ -1,4 +1,4 @@
-# NHAPMON_CNPM_NHOM-11_QLHT_QUANCAFE
+# NHAP_MON_CNPM_NHOM-11_HE_THONG_QUAN_LY_QUAN_CAFE
 Xây dựng một hệ thống quản lý quán cafe đơn giản-chính xác-dễ dùng, giúp chủ quán và nhân viên vận hành quán hiệu quả, giảm sai sót và tiết kiệm thời gian.
 ## Thành viên nhóm
 | STT | Họ và tên | MSSV | Vai trò trong nhóm |
