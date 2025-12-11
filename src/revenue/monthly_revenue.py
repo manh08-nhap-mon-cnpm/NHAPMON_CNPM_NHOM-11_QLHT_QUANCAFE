@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 def monthly_revenue(month, year):
-    """DT02 – Xem doanh thu tháng"""
-    print(f"Doanh thu tháng {month}/{year}")
+    print(f"Chức năng doanh thu tháng {month}/{year} (chưa cài chi tiết theo ngày)")
+
