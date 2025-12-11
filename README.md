@@ -1,4 +1,4 @@
-# NHẬP MôN CNPM NHÓM 11 HỆ THỐNG QUẢN LÝ QUÁN CAFE
+# NHẬP MÔN CNPM NHÓM 11 HỆ THỐNG QUẢN LÝ QUÁN CAFE
 Xây dựng một hệ thống quản lý quán cafe đơn giản, chính xác, dễ dùng, giúp chủ quán và nhân viên vận hành quán hiệu quả, giảm sai sót và tiết kiệm thời gian.
 ## Thành viên nhóm
 | STT | Họ và tên | MSSV | Vai trò trong nhóm |
