@@ -15,3 +15,12 @@ def update_item(item_id, name=None, price=None, category_id=None):
             print(f"✅ Đã cập nhật món {item_id}")
             return
     print("❌ Không tìm thấy món")
+def delete_item(item_id):
+    items = load_db("menu")
+    new_list = [it for it in items if int(it["id"]) != int(item_id)]
+    if len(new_list) == len(items):
+        print("❌ Không tìm thấy món")
+        return
+    save_db("menu", new_list)
+    print(f"🗑️ Đã xóa món {item_id}")
+
