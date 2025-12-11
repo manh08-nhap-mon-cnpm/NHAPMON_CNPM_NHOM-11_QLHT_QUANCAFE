@@ -10,3 +10,6 @@ def update_category(category_id, name):
             print("✅ Đã cập nhật danh mục")
             return
     print("❌ Không tìm thấy danh mục")
+def update_category(category_id, name):
+    """DM02 – Cập nhật danh mục"""
+    print(f"Cập nhật danh mục {category_id}")
