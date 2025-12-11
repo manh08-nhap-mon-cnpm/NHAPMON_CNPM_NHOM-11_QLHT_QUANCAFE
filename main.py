@@ -1,3 +1,9 @@
+# -*- coding: utf-8 -*-
+import os
+os.system('chcp 65001 >nul')   # ← Dòng này fix lỗi tiếng Việt trên CMD
+from colorama import init
+init(autoreset=True)
+# ... phần còn lại của code
 # main.py
 from src.data.database import db, init_data, get_next_id
 from src.tables.list_tables import list_tables
