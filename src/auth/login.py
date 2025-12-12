@@ -17,5 +17,17 @@ def login(username, password):
         return user
     print("❌ Sai username/password")
     return None
+# -*- coding: utf-8 -*-
+from src.core.database import load_db, save_db
+
+def change_password(user_id, old_password, new_password):
+    users = load_db("users")
+    for u in users:
+        if int(u.get("id",0)) == int(user_id) and u.get("password") == old_password:
+            u["password"] = new_password
+            save_db("users", users)
+            print("✅ Đổi mật khẩu thành công")
+            return
+    print("❌ Thông tin không hợp lệ")
 
   
