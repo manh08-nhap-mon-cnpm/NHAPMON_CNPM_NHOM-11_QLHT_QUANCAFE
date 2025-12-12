@@ -29,5 +29,18 @@ def change_password(user_id, old_password, new_password):
             print("✅ Đổi mật khẩu thành công")
             return
     print("❌ Thông tin không hợp lệ")
+# -*- coding: utf-8 -*-
+from src.core.database import load_db, save_db
+
+def assign_role(user_id, role):
+    users = load_db("users")
+    for u in users:
+        if int(u.get("id",0)) == int(user_id):
+            u["role"] = str(role)
+            save_db("users", users)
+            print("✅ Đã phân quyền")
+            return
+    print("❌ Không tìm thấy user")
+
 
   
