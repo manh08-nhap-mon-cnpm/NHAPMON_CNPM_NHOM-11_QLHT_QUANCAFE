@@ -36,4 +36,12 @@ def update_employee(employee_id, name=None, role=None, phone=None):
     print("❌ Không tìm thấy nhân viên")
 # -*- coding: utf-8 -*-
 from src.core.database import load_db, save_db
+# -*- coding: utf-8 -*-
+from src.core.database import load_db, save_db
+
+def delete_employee(employee_id):
+    emps = load_db("employees")
+    new_list = [e for e in emps if int(e["id"]) != int(employee_id)]
+    save_db("employees", new_list)
+    print("🗑️ Đã xóa nhân viên (nếu tồn tại)")
 
