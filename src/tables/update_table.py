@@ -1,15 +1,15 @@
-# src/tables/create_table.py
-from src.core.database import load_db, save_db, next_id
+# src/tables/update_table.py
+from src.core.database import load_db, save_db
 
-def create_table(name, seats):
+def update_table(table_id, name=None, seats=None):
     tables = load_db("tables")
-    new_id = next_id("tables")
-    table = {
-        "id": new_id,
-        "name": str(name),
-        "seats": int(seats),
-        "status": "Trống"
-    }
-    tables.append(table)
-    save_db("tables", tables)
-    print(f"✅ Tạo bàn thành công: ID {new_id} | {name} ({seats} ghế)")
+    for t in tables:
+        if t["id"] == int(table_id):
+            if name is not None:
+                t["name"] = str(name)
+            if seats is not None:
+                t["seats"] = int(seats)
+            save_db("tables", tables)
+            print(f"✅ Đã cập nhật bàn {table_id}")
+            return
+    print("❌ Không tìm thấy bàn")

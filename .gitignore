@@ -1,0 +1,52 @@
+# Python bytecode
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Virtual environment
+venv/
+env/
+.venv/
+ENV/
+
+# Database file (không push db thật lên GitHub)
+database/*.db
+database/*.sqlite3
+database/cafe.db
+
+# Environment variables
+.env
+.env.local
+
+# IDE / Editor
+.idea/
+.vscode/
+*.sublime-project
+*.sublime-workspace
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+logs/
+
+# Build / Dist
+build/
+dist/
+*.egg-info/
+
+# Test coverage
+htmlcov/
+.coverage
+.coverage.*
+
+# Jupyter Notebook checkpoints
+.ipynb_checkpoints
+
+# MyPy cache
+.mypy_cache/
+.dmypy.json
+
+# PyInstaller
+*.manifest
+*.spec
