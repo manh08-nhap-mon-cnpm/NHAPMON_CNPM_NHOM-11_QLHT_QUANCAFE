@@ -1,15 +1,12 @@
-# src/tables/create_table.py
-from src.core.database import load_db, save_db, next_id
+# src/tables/delete_table.py
+from src.core.database import load_db, save_db
 
-def create_table(name, seats):
+def delete_table(table_id):
     tables = load_db("tables")
-    new_id = next_id("tables")
-    table = {
-        "id": new_id,
-        "name": str(name),
-        "seats": int(seats),
-        "status": "Trống"
-    }
-    tables.append(table)
-    save_db("tables", tables)
-    print(f"✅ Tạo bàn thành công: ID {new_id} | {name} ({seats} ghế)")
+    new_list = [t for t in tables if t["id"] != int(table_id)]
+    if len(new_list) == len(tables):
+        print("❌ Không tìm thấy bàn.")
+        return
+    save_db("tables", new_list)
+    print(f"🗑️ Đã xóa bàn {table_id}")
+
