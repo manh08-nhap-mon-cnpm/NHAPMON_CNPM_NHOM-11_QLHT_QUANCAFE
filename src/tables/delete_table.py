@@ -9,4 +9,3 @@ def delete_table(table_id):
         return
     save_db("tables", new_list)
     print(f"🗑️ Đã xóa bàn {table_id}")
-
