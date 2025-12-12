@@ -1,15 +1,11 @@
-# src/tables/update_table.py
-from src.core.database import load_db, save_db
+# src/tables/list_tables.py
+from src.core.database import load_db
 
-def update_table(table_id, name=None, seats=None):
+def list_tables():
     tables = load_db("tables")
+    if not tables:
+        print("⚠️ Chưa có bàn nào.")
+        return
+    print("\n=== DANH SÁCH BÀN ===")
     for t in tables:
-        if t["id"] == int(table_id):
-            if name is not None:
-                t["name"] = str(name)
-            if seats is not None:
-                t["seats"] = int(seats)
-            save_db("tables", tables)
-            print(f"✅ Đã cập nhật bàn {table_id}")
-            return
-    print("❌ Không tìm thấy bàn")
+        print(f"ID {t['id']} | {t['name']} | {t.get('seats','?')} ghế | {t.get('status','?')}")
