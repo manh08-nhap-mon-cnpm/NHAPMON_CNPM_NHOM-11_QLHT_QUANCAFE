@@ -13,4 +13,3 @@ def update_table(table_id, name=None, seats=None):
             print(f"✅ Đã cập nhật bàn {table_id}")
             return
     print("❌ Không tìm thấy bàn")
-
