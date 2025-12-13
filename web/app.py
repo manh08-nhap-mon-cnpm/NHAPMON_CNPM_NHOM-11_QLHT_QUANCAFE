@@ -1,3 +1,5 @@
+import os
+print(os.getcwd())
 from flask import Flask, render_template
 
 app = Flask(__name__)
