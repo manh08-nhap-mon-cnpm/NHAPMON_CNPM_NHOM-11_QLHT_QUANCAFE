@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <title>Quản lý quán cafe</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+
+<div class="sidebar">
+    <h2>☕ BREW MASTER</h2>
+    <ul>
+        <li>Bàn</li>
+        <li>Món</li>
+        <li>Hóa đơn</li>
+        <li>Nhân viên</li>
+        <li>Doanh thu</li>
+    </ul>
+</div>
+
+<div class="content">
+    {% block content %}{% endblock %}
+</div>
+
+</body>
+</html>
