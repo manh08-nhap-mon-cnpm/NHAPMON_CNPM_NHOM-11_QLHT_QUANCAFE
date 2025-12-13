@@ -1,13 +1,10 @@
-from flask import Flask
+from flask import Flask, render_template
 
 app = Flask(__name__)
 
 @app.route("/")
-def home():
-    return """
-    <h1>QUẢN LÝ QUÁN CAFE</h1>
-    <p>Web đầu tiên đã chạy 🎉</p>
-    """
+def dashboard():
+    return render_template("dashboard.html")
 
 if __name__ == "__main__":
     app.run(debug=True)
