@@ -1,12 +1,42 @@
-{% extends "layout.html" %}
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Dashboard</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
 
-{% block content %}
-<h1>Dashboard</h1>
+<body>
 
-<div class="cards">
-    <div class="card">🪑 Bàn: 12</div>
-    <div class="card">☕ Món: 25</div>
-    <div class="card">🧾 Hóa đơn: 5</div>
-    <div class="card">💰 Doanh thu: 2.500.000đ</div>
+<div class="sidebar">
+    <h2>☕ KATINAT ADMIN</h2>
+    <p>📋 Quản lý bàn</p>
+    <p>🍰 Quản lý món</p>
+    <p>📦 Nguyên liệu</p>
+    <p>👨‍💼 Nhân viên</p>
+    <p>💰 Doanh thu</p>
 </div>
-{% endblock %}
+
+<div class="content">
+    <h1>Dashboard</h1>
+    <p>Chào mừng bạn quay lại 👋</p>
+
+    <div class="cards">
+        <div class="card">
+            <h3>Tổng bàn</h3>
+            <p>25</p>
+        </div>
+        <div class="card">
+            <h3>Đơn hôm nay</h3>
+            <p>18</p>
+        </div>
+        <div class="card">
+            <h3>Doanh thu</h3>
+            <p>8.500.000đ</p>
+        </div>
+    </div>
+</div>
+
+</body>
+</html>
+
