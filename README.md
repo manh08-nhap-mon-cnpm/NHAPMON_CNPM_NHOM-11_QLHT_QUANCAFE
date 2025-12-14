@@ -64,10 +64,10 @@ python app.py
 Mở trình duyệt và truy cập:
 http://127.0.0.1:5000/login
 ### Bước 6: Tài khoản đăng nhập mẫu
-Admin:
-# Tên đăng nhập: admin
-# Mật khẩu: 123
-Staff:
-# Tên đăng nhập: staff
-# Mật khẩu: 123
+#### Admin:
+Tên đăng nhập: admin
+Mật khẩu: 123
+### Staff:
+Tên đăng nhập: staff
+Mật khẩu: 123
 (Có thể thay đổi mật khẩu sau khi đăng nhập)
