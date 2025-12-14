@@ -2,29 +2,39 @@
 <html>
 <head>
     <meta charset="UTF-8">
-    <title>Katinat Login</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <title>Katinat System</title>
+    <link rel="stylesheet" href="/static/css/style.css">
 </head>
+<body>
 
-<body class="login-page">
+<div class="login-container">
+    <h2 class="brand">Katinat System</h2>
 
-<div class="login-wrapper">
-    <img src="{{ url_for('static', filename='img/katinat-logo.png') }}" alt="Katinat Logo">
+    <form method="POST">
+        <div class="input-group">
+            <input type="text" name="username" placeholder="Tên đăng nhập" required>
+        </div>
 
-    <h2>KATINAT ADMIN</h2>
+        <div class="input-group password-group">
+            <input type="password" name="password" id="password" placeholder="Mật khẩu" required>
+            <span class="toggle-password" onclick="toggle()">👁</span>
+        </div>
 
-    <form method="post">
-        <input type="text" name="username" placeholder="Tên đăng nhập">
-        <input type="password" name="password" placeholder="Mật khẩu">
-        <button type="submit">Đăng nhập</button>
+        <div class="options">
+            <label><input type="checkbox"> Ghi nhớ mật khẩu</label>
+            <a href="/change-password">Quên mật khẩu?</a>
+        </div>
+
+        <button class="btn-login">Đăng nhập</button>
     </form>
-
-    {% if error %}
-        <p style="color:red; margin-top:10px">{{ error }}</p>
-    {% endif %}
 </div>
+
+<script>
+function toggle() {
+    const p = document.getElementById("password");
+    p.type = p.type === "password" ? "text" : "password";
+}
+</script>
 
 </body>
 </html>
-
-

@@ -1,42 +1,33 @@
 <!DOCTYPE html>
-<html>
+<html lang="vi">
 <head>
-    <meta charset="UTF-8">
-    <title>Dashboard</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+<meta charset="UTF-8">
+<title>Dashboard</title>
+<link rel="stylesheet" href="/static/css/style.css">
 </head>
-
 <body>
-
 <div class="sidebar">
-    <h2>☕ KATINAT ADMIN</h2>
-    <p>📋 Quản lý bàn</p>
-    <p>🍰 Quản lý món</p>
-    <p>📦 Nguyên liệu</p>
-    <p>👨‍💼 Nhân viên</p>
-    <p>💰 Doanh thu</p>
+<h3>Dashboard</h3>
+<ul>
+<li>Gọi món</li>
+<li>Hóa đơn</li>
+
+
+{% if role == 'admin' %}
+<li>Quản lý nhân viên</li>
+<li>Doanh thu</li>
+<li><a href="/change-password">Đổi mật khẩu</a></li>
+{% endif %}
+
+
+<li><a href="/logout">Đăng xuất</a></li>
+</ul>
 </div>
+
 
 <div class="content">
-    <h1>Dashboard</h1>
-    <p>Chào mừng bạn quay lại 👋</p>
-
-    <div class="cards">
-        <div class="card">
-            <h3>Tổng bàn</h3>
-            <p>25</p>
-        </div>
-        <div class="card">
-            <h3>Đơn hôm nay</h3>
-            <p>18</p>
-        </div>
-        <div class="card">
-            <h3>Doanh thu</h3>
-            <p>8.500.000đ</p>
-        </div>
-    </div>
+<h2>Xin chào {{ role|upper }}</h2>
+<p>Hệ thống quản lý quán cà phê Katinat</p>
 </div>
-
 </body>
 </html>
-
