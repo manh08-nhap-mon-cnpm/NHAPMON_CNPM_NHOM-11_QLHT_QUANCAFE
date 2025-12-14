@@ -1,95 +1,107 @@
-/* ===== RESET & BASE ===== */
 * {
     box-sizing: border-box;
+    font-family: 'Inter', 'Segoe UI', sans-serif;
 }
 
 body {
     margin: 0;
     height: 100vh;
-    font-family: 'Segoe UI', sans-serif;
-    background: #f7efe5;
+    background: #f9f5f1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #3b2f2f;
+}
+
+/* ===== AUTH BOX ===== */
+.login-container {
+    width: 100%;
     display: flex;
     justify-content: center;
-    align-items: center;
-    color: #333;
 }
 
-/* ===== LOGIN / CHANGE PASSWORD CONTAINER ===== */
-.login-container {
+.login-box {
     background: #ffffff;
-    padding: 38px 42px;
+    width: 360px;
+    padding: 32px 28px;
     border-radius: 18px;
-    width: 380px;
-    box-shadow: 0 18px 45px rgba(0, 0, 0, 0.12);
+    box-shadow: 0 18px 36px rgba(0,0,0,0.08);
 }
 
-.brand {
+.login-box h2 {
     text-align: center;
-    margin-bottom: 28px;
-    font-size: 26px;
+    font-size: 20px;
     font-weight: 600;
-    color: #7b4a2e;
-    letter-spacing: 0.5px;
+    margin-bottom: 6px;
+    color: #6f4e37;
 }
 
-/* ===== INPUT GROUP ===== */
+.subtitle {
+    text-align: center;
+    font-size: 14px;
+    color: #8b6b55;
+    margin-bottom: 26px;
+}
+
+/* ===== INPUT ===== */
 .input-group {
-    margin-bottom: 18px;
     position: relative;
+    margin-bottom: 18px;
 }
 
 .input-group input {
     width: 100%;
-    padding: 12px 14px;
+    padding: 12px 40px 12px 12px;
+    font-size: 14px;
     border-radius: 10px;
-    border: 1px solid #ddd;
-    font-size: 15px;
+    border: 1px solid #d6c5b4;
     outline: none;
-    transition: 0.2s;
+    background: #fff;
 }
 
 .input-group input:focus {
-    border-color: #c29a6d;
+    border-color: #6f4e37;
 }
 
-/* ===== PASSWORD TOGGLE ===== */
-.password-group .toggle-password {
+.input-group label {
     position: absolute;
-    right: 14px;
+    left: 12px;
+    top: -9px;
+    background: #fff;
+    padding: 0 6px;
+    font-size: 12px;
+    color: #8b6b55;
+}
+
+.toggle-password {
+    position: absolute;
+    right: 12px;
     top: 50%;
     transform: translateY(-50%);
     cursor: pointer;
-    font-size: 16px;
-    opacity: 0.55;
+    font-size: 14px;
+    color: #8b6b55;
 }
 
-.password-group .toggle-password:hover {
-    opacity: 1;
-}
-
-/* ===== OPTIONS ROW ===== */
+/* ===== OPTIONS ===== */
 .options {
     display: flex;
     justify-content: space-between;
     align-items: center;
     font-size: 13px;
     margin-bottom: 22px;
+    color: #6f4e37;
 }
 
 .options label {
     display: flex;
     align-items: center;
-    gap: 5px;
-    cursor: pointer;
-}
-
-.options input {
-    accent-color: #c29a6d;
+    gap: 6px;
 }
 
 .options a {
+    color: #6f4e37;
     text-decoration: none;
-    color: #a9744f;
 }
 
 .options a:hover {
@@ -97,75 +109,34 @@ body {
 }
 
 /* ===== BUTTON ===== */
-.btn-login {
+button {
     width: 100%;
-    padding: 13px;
+    padding: 12px;
     border: none;
-    border-radius: 12px;
-    background: #c29a6d;
-    color: white;
-    font-size: 16px;
-    cursor: pointer;
-    transition: 0.2s;
-}
-
-.btn-login:hover {
-    background: #b0855b;
-}
-
-/* ===== CHANGE PASSWORD PAGE ===== */
-.change-note {
-    font-size: 13px;
-    color: #777;
-    margin-bottom: 18px;
-    text-align: center;
-}
-
-/* ===== DASHBOARD COMMON ===== */
-.dashboard {
-    background: #ffffff;
-    padding: 30px 34px;
-    border-radius: 18px;
-    width: 900px;
-    min-height: 520px;
-    box-shadow: 0 18px 45px rgba(0, 0, 0, 0.12);
-}
-
-.dashboard h2 {
-    margin-top: 0;
-    margin-bottom: 25px;
-    color: #7b4a2e;
-}
-
-/* ===== DASHBOARD MENU ===== */
-.menu {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 18px;
-}
-
-.menu div {
-    background: #f3e6d8;
-    padding: 22px;
-    border-radius: 14px;
-    text-align: center;
+    border-radius: 10px;
+    background: #6f4e37;
+    color: #fff;
+    font-size: 14px;
     font-weight: 500;
     cursor: pointer;
-    transition: 0.2s;
 }
 
-.menu div:hover {
-    background: #e8d2b8;
+button:hover {
+    background: #5c3d2e;
 }
 
-/* ===== LOGOUT ===== */
-.dashboard a {
-    display: inline-block;
-    margin-top: 25px;
+/* ===== BACK ===== */
+.back-login {
+    text-align: center;
+    margin-top: 18px;
+}
+
+.back-login a {
+    font-size: 13px;
+    color: #8b6b55;
     text-decoration: none;
-    color: #a9744f;
 }
 
-.dashboard a:hover {
+.back-login a:hover {
     text-decoration: underline;
 }
