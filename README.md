@@ -1,4 +1,3 @@
-# NHẬP MÔN CNPM – NHÓM 11  
 ## HỆ THỐNG QUẢN LÝ QUÁN CAFE
 
 Hệ thống quản lý quán cafe được xây dựng nhằm hỗ trợ chủ quán và nhân viên trong việc quản lý hoạt động kinh doanh hằng ngày một cách hiệu quả, chính xác và dễ sử dụng.  
@@ -54,34 +53,21 @@ Hệ thống được xây dựng dưới dạng ứng dụng web sử dụng Fl
 ## 5. Hướng dẫn chạy hệ thống
 
 ### Bước 1: Clone project
-```bash
 git clone https://github.com/manh08-nhap-mon-cnpm/NHAPMON_CNPM_NHOM-11_QLHT_QUANCAFE.git
-Bước 2: Di chuyển vào thư mục web
+### Bước 2: Di chuyển vào thư mục web
 cd NHAPMON_CNPM_NHOM-11_QLHT_QUANCAFE/web
-
-Bước 3: Cài đặt thư viện cần thiết
+### Bước 3: Cài đặt thư viện cần thiết
 pip install flask
-
-Bước 4: Chạy ứng dụng
+### Bước 4: Chạy ứng dụng
 python app.py
-
-Bước 5: Truy cập hệ thống
-
+### Bước 5: Truy cập hệ thống
 Mở trình duyệt và truy cập:
-
 http://127.0.0.1:5000/login
-6. Tài khoản đăng nhập mẫu
-
+### Bước 6: Tài khoản đăng nhập mẫu
 Admin
-
 Tên đăng nhập: admin
-
 Mật khẩu: 123
-
 Staff
-
 Tên đăng nhập: staff
-
 Mật khẩu: 123
-
 (Có thể thay đổi mật khẩu sau khi đăng nhập)
