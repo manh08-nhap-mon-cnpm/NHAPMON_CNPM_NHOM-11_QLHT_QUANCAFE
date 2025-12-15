@@ -1,70 +1,101 @@
 * {
     box-sizing: border-box;
-    font-family: "Segoe UI", sans-serif;
 }
 
 body {
     margin: 0;
-    background: #f5efe6;
-    color: #3e2723;
+    font-family: 'Segoe UI', sans-serif;
+    background: #f5f7f6;
+    color: #333;
+}
+
+/* ===== SIDEBAR ===== */
+.sidebar {
+    width: 250px;
+    height: 100vh;
+    background: linear-gradient(180deg, #0f3d2e, #164d3a);
+    position: fixed;
+    padding: 30px 20px;
+    color: white;
+}
+
+.sidebar h2 {
+    text-align: center;
+    margin-bottom: 40px;
+    font-weight: 600;
+    letter-spacing: 1px;
+}
+
+.sidebar a {
+    display: block;
+    padding: 13px 18px;
+    margin-bottom: 12px;
+    color: white;
+    text-decoration: none;
+    border-radius: 14px;
+    transition: all 0.3s ease;
+    font-size: 15px;
+}
+
+.sidebar a:hover {
+    background: rgba(255,255,255,0.15);
+    transform: translateX(6px);
+}
+
+/* ===== MAIN ===== */
+.main {
+    margin-left: 250px;
+    padding: 40px 50px;
 }
 
 .header {
-    background: #4e342e;
-    padding: 18px 30px;
-    color: white;
-    font-size: 22px;
-    font-weight: bold;
+    font-size: 28px;
+    font-weight: 600;
+    margin-bottom: 35px;
+    color: #0f3d2e;
 }
 
-.container {
-    padding: 40px;
-}
-
-.grid {
+/* ===== CARDS ===== */
+.cards {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-    gap: 25px;
+    gap: 30px;
 }
 
 .card {
-    background: #fff8f1;
-    border-radius: 18px;
+    background: white;
+    border-radius: 22px;
     padding: 30px;
-    box-shadow: 0 8px 20px rgba(0,0,0,0.08);
-    transition: 0.3s ease;
-    cursor: pointer;
+    box-shadow: 0 18px 40px rgba(0,0,0,0.08);
+    transition: 0.35s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.card::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 6px;
+    height: 100%;
+    background: #2ecc9a;
 }
 
 .card:hover {
-    transform: translateY(-6px);
-    box-shadow: 0 14px 30px rgba(0,0,0,0.15);
+    transform: translateY(-8px);
+    box-shadow: 0 25px 50px rgba(0,0,0,0.12);
 }
 
 .card h3 {
-    margin: 0 0 10px;
+    margin: 0 0 12px;
+    color: #0f3d2e;
     font-size: 20px;
 }
 
 .card p {
     margin: 0;
+    color: #666;
     font-size: 14px;
-    color: #6d4c41;
-}
-
-.logout {
-    margin-top: 40px;
-    text-align: right;
-}
-
-.logout a {
-    text-decoration: none;
-    color: white;
-    background: #6d4c41;
-    padding: 10px 18px;
-    border-radius: 10px;
-}
-
-.logout a:hover {
-    background: #4e342e;
+    line-height: 1.5;
 }

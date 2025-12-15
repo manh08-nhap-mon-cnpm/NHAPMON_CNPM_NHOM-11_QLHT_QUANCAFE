@@ -2,52 +2,45 @@
 <html lang="vi">
 <head>
     <meta charset="UTF-8">
-    <title>Katinat System | Admin</title>
+    <title>Admin Dashboard</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/dashboard.css') }}">
 </head>
 <body>
 
-<div class="header">
-    👑 KATINAT SYSTEM – ADMIN DASHBOARD
+<div class="sidebar">
+    <h2>Starbucks</h2>
+    <a href="#">📊 Dashboard</a>
+    <a href="#">🪑 Quản lý bàn</a>
+    <a href="#">☕ Quản lý món</a>
+    <a href="#">👥 Nhân viên</a>
+    <a href="#">💰 Doanh thu</a>
+    <a href="{{ url_for('change_password') }}">🔐 Đổi mật khẩu</a>
+    <a href="{{ url_for('logout') }}">🚪 Đăng xuất</a>
 </div>
 
-<div class="container">
-    <div class="grid">
+<div class="main">
+    <div class="header">Xin chào Admin 👑</div>
 
+    <div class="cards">
         <div class="card">
-            <h3>☕ Quản lý bàn</h3>
-            <p>Tạo, cập nhật, trạng thái bàn</p>
+            <h3>Quản lý bàn</h3>
+            <p>Thêm, sửa, cập nhật trạng thái bàn trong quán.</p>
         </div>
 
         <div class="card">
-            <h3>🍰 Quản lý món</h3>
-            <p>Thêm – sửa – xóa món</p>
+            <h3>Quản lý menu</h3>
+            <p>Thêm món mới, chỉnh sửa giá và danh mục.</p>
         </div>
 
         <div class="card">
-            <h3>📂 Danh mục</h3>
-            <p>Phân loại menu</p>
+            <h3>Nhân viên</h3>
+            <p>Phân quyền admin / staff cho nhân viên.</p>
         </div>
 
         <div class="card">
-            <h3>👥 Nhân viên</h3>
-            <p>Thêm, sửa, phân quyền</p>
+            <h3>Báo cáo doanh thu</h3>
+            <p>Theo dõi doanh thu theo ngày và tháng.</p>
         </div>
-
-        <div class="card">
-            <h3>📊 Doanh thu</h3>
-            <p>Xem doanh thu ngày / tháng</p>
-        </div>
-
-        <div class="card">
-            <h3>📦 Nguyên liệu</h3>
-            <p>Nhập kho, quản lý tồn</p>
-        </div>
-
-    </div>
-
-    <div class="logout">
-        <a href="{{ url_for('logout') }}">Đăng xuất</a>
     </div>
 </div>
 

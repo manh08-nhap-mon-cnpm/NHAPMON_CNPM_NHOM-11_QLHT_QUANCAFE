@@ -2,46 +2,44 @@
 <html lang="vi">
 <head>
     <meta charset="UTF-8">
-    <title>Login</title>
+    <title>Starbucks System | Login</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <script src="{{ url_for('static', filename='js/login.js') }}" defer></script>
 </head>
-<body>
+<body class="auth-page">
 
-<div class="login-container">
-    <div class="login-box">
-        <h2>Katinat System</h2>
-        <p class="subtitle">Đăng nhập hệ thống</p>
+<div class="auth-container">
+    <!-- LEFT -->
+    <div class="auth-image">
+        <img src="{{ url_for('static', filename='images/starbucks-cartoon.png') }}">
+    </div>
+
+    <!-- RIGHT -->
+    <div class="auth-form">
+        <h2>Starbucks System ☕</h2>
+        <p class="sub-text">Welcome back! Please login</p>
 
         <form method="POST">
             <div class="input-group">
-                <input type="text" name="username" required>
-                <label>Tên đăng nhập</label>
+                <input type="text" name="username" placeholder="Username" required>
             </div>
 
-            <div class="input-group">
-                <input type="password" name="password" id="password" required>
-                <label>Mật khẩu</label>
-                <span class="toggle-password" onclick="toggle()">👁</span>
+            <div class="input-group password">
+                <input type="password" name="password" id="password" placeholder="Password" required>
+                <span onclick="togglePassword()">👁</span>
             </div>
 
             <div class="options">
                 <label>
-                    <input type="checkbox" name="remember"> Ghi nhớ
+                    <input type="checkbox"> Remember me
                 </label>
-                <a href="/change-password">Quên mật khẩu?</a>
+                <a href="{{ url_for('change_password') }}">Forgot password?</a>
             </div>
 
-            <button type="submit">Đăng nhập</button>
+            <button type="submit">Login</button>
         </form>
     </div>
 </div>
-
-<script>
-function toggle() {
-    const p = document.getElementById("password");
-    p.type = p.type === "password" ? "text" : "password";
-}
-</script>
 
 </body>
 </html>

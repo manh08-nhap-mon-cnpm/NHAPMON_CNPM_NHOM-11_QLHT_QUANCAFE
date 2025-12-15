@@ -2,42 +2,38 @@
 <html lang="vi">
 <head>
     <meta charset="UTF-8">
-    <title>Katinat System | Staff</title>
+    <title>Staff Dashboard</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/dashboard.css') }}">
 </head>
 <body>
 
-<div class="header">
-    ☕ KATINAT SYSTEM – STAFF DASHBOARD
+<div class="sidebar">
+    <h2>Starbucks</h2>
+    <a href="#">📊 Dashboard</a>
+    <a href="#">🧾 Gọi món</a>
+    <a href="#">💳 Thanh toán</a>
+    <a href="{{ url_for('change_password') }}">🔐 Đổi mật khẩu</a>
+    <a href="{{ url_for('logout') }}">🚪 Đăng xuất</a>
 </div>
 
-<div class="container">
-    <div class="grid">
+<div class="main">
+    <div class="header">Xin chào Nhân viên 👋</div>
 
+    <div class="cards">
         <div class="card">
-            <h3>🧾 Bán hàng (POS)</h3>
-            <p>Gọi món – thanh toán</p>
+            <h3>Tạo hóa đơn</h3>
+            <p>Gọi món nhanh cho khách tại bàn.</p>
         </div>
 
         <div class="card">
-            <h3>🪑 Trạng thái bàn</h3>
-            <p>Xem bàn trống / đang dùng</p>
+            <h3>Bàn đang phục vụ</h3>
+            <p>Xem trạng thái các bàn trong ca làm.</p>
         </div>
 
         <div class="card">
-            <h3>📜 Hóa đơn</h3>
-            <p>Xem hóa đơn hiện tại</p>
+            <h3>Thanh toán</h3>
+            <p>Hoàn tất hóa đơn và in bill.</p>
         </div>
-
-        <div class="card">
-            <h3>🔑 Đổi mật khẩu</h3>
-            <p>Bảo mật tài khoản</p>
-        </div>
-
-    </div>
-
-    <div class="logout">
-        <a href="{{ url_for('logout') }}">Đăng xuất</a>
     </div>
 </div>
 
