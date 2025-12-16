@@ -1,0 +1,29 @@
+{% extends "dashboard_base.html" %}
+
+{% block content %}
+<h2>{{ title }}</h2>
+<p>Tổng doanh thu tháng: {{ total }}₫</p>
+
+<table class="table-container">
+  <thead>
+    <tr>
+      <th>ID</th>
+      <th>Bàn</th>
+      <th>Tổng tiền</th>
+      <th>Ngày</th>
+      <th>Chi tiết</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for inv in invoices %}
+    <tr>
+      <td>{{ inv.id }}</td>
+      <td>{{ inv.table_id }}</td>
+      <td>{{ inv.total }}</td>
+      <td>{{ inv.created_at }}</td>
+      <td><a href="{{ url_for('invoice_detail', invoice_id=inv.id) }}">Xem</a></td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% endblock %}

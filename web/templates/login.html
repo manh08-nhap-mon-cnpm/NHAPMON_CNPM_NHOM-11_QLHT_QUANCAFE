@@ -4,20 +4,24 @@
     <meta charset="UTF-8">
     <title>Starbucks System | Login</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
-    <script src="{{ url_for('static', filename='js/login.js') }}" defer></script>
+    <script>
+        function togglePassword() {
+            const pass = document.getElementById('password');
+            if (pass.type === 'password') pass.type = 'text';
+            else pass.type = 'password';
+        }
+    </script>
 </head>
 <body class="auth-page">
 
 <div class="auth-container">
-    <!-- LEFT -->
-    <div class="auth-image">
-        <img src="{{ url_for('static', filename='images/starbucks-cartoon.png') }}">
-    </div>
-
-    <!-- RIGHT -->
     <div class="auth-form">
         <h2>Starbucks System ☕</h2>
         <p class="sub-text">Welcome back! Please login</p>
+
+        {% if error %}
+            <p style="color:red; text-align:center; margin-bottom:15px;">{{ error }}</p>
+        {% endif %}
 
         <form method="POST">
             <div class="input-group">

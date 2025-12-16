@@ -1,0 +1,7 @@
+{% extends "dashboard_base.html" %}
+{% block content %}
+<h2>Hóa đơn #{{ invoice.id }}</h2>
+<p>Bàn: {{ invoice.table_id }}</p>
+<p>Tổng tiền: {{ invoice.total }}₫</p>
+<p>Ngày: {{ invoice.created_at }}</p>
+{% endblock %}

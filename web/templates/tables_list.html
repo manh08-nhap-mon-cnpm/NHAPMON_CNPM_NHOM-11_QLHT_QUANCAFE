@@ -1,0 +1,33 @@
+{% extends "dashboard_base.html" %}
+{% block content %}
+<h2>Danh sách bàn</h2>
+<table class="table-container">
+  <thead>
+    <tr><th>ID</th><th>Tên bàn</th><th>Trạng thái</th><th>Update</th></tr>
+  </thead>
+  <tbody>
+    {% for tb in tables %}
+    <tr>
+      <td>{{ tb.id }}</td>
+      <td>{{ tb.name }}</td>
+      <td class="status-{{ tb.status|lower }}">{{ tb.status }}</td>
+      <td><button class="button" onclick="updateTable({{ tb.id }})">Cập nhật</button></td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+
+<script>
+function updateTable(id){
+    let status = prompt("Nhập trạng thái mới (EMPTY / USING):");
+    fetch("/tables/update", {
+        method: "POST",
+        headers: {"Content-Type":"application/json"},
+        body: JSON.stringify({id:id, status:status})
+    }).then(res => res.json()).then(data=>{
+        if(data.success) location.reload();
+        else alert("Update lỗi!");
+    });
+}
+</script>
+{% endblock %}
