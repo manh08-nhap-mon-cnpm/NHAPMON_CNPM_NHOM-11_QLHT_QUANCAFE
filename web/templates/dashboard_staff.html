@@ -5,93 +5,31 @@
     <title>Staff Dashboard | Starbucks</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
     <style>
-        body { background: #e6f2ef; font-family: 'Segoe UI', sans-serif; }
-        .sidebar {
-            width: 220px;
-            background: #1e3932;
-            color: white;
-            position: fixed;
-            height: 100%;
-            padding-top: 30px;
-        }
-        .sidebar h2 { text-align: center; margin-bottom: 30px; font-size: 22px; }
-        .sidebar a {
-            display: block;
-            color: white;
-            padding: 12px 20px;
-            text-decoration: none;
-            transition: 0.3s;
-        }
-        .sidebar a:hover { background: #0f3d2e; }
-        .main {
-            margin-left: 240px;
-            padding: 30px;
-        }
-        .header { font-size: 24px; margin-bottom: 20px; color: #1e3932; }
-        .cards { display: flex; gap: 20px; flex-wrap: wrap; margin-bottom: 30px; }
-        .card {
-            flex: 1 1 200px;
-            background: white;
-            border-radius: 15px;
-            padding: 20px;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
-            transition: 0.3s;
-        }
-        .card:hover { transform: translateY(-5px); box-shadow: 0 10px 25px rgba(0,0,0,0.15); }
-        .card h3 { color: #1e3932; margin-bottom: 10px; }
-        .card p { color: #555; font-size: 14px; }
-        table {
-            width: 100%; border-collapse: collapse; margin-top: 20px;
-        }
-        table th, table td { border: 1px solid #ccc; padding: 12px; text-align: left; }
-        table th { background: #1e3932; color: white; }
+        body { margin: 0; font-family: 'Segoe UI', sans-serif; background: #f3f6f4; }
+        .sidebar { width: 220px; height: 100vh; background: #006241; color: white; position: fixed; padding-top: 25px; }
+        .sidebar a { display: block; padding: 12px 20px; color: white; text-decoration: none; }
+        .sidebar a:hover { background: #004d33; }
+        .main { margin-left: 240px; padding: 30px; }
+        .header { font-size: 26px; font-weight: bold; color: #1e3932; margin-bottom: 25px; }
+        .action-card { background: white; padding: 30px; border-radius: 15px; text-align: center; box-shadow: 0 6px 18px rgba(0,0,0,0.1); }
+        .btn-start { background: #00754a; color: white; padding: 15px 30px; border-radius: 10px; text-decoration: none; font-weight: bold; display: inline-block; margin-top: 20px; }
     </style>
 </head>
 <body>
-
-<div class="sidebar">
-    <h2>Starbucks</h2>
-    <a href="{{ url_for('dashboard_staff') }}">📊 Dashboard</a>
-    <a href="{{ url_for('dashboard_staff') }}">🧾 Gọi món</a>
-    <a href="{{ url_for('dashboard_staff') }}">💳 Thanh toán</a>
-    <a href="{{ url_for('change_password') }}">🔐 Đổi mật khẩu</a>
-    <a href="{{ url_for('logout') }}">🚪 Đăng xuất</a>
-</div>
-
-<div class="main">
-    <div class="header">Xin chào Nhân viên 👋</div>
-
-    <div class="cards">
-        <div class="card">
-            <h3>Tạo hóa đơn</h3>
-            <p>Gọi món nhanh cho khách tại bàn.</p>
-        </div>
-        <div class="card">
-            <h3>Bàn đang phục vụ</h3>
-            <p>Xem trạng thái các bàn trong ca làm.</p>
-        </div>
-        <div class="card">
-            <h3>Thanh toán</h3>
-            <p>Hoàn tất hóa đơn và in bill.</p>
-        </div>
+    <div class="sidebar">
+        <h2 style="text-align: center;">Starbucks</h2>
+        <a href="{{ url_for('dashboard_staff') }}">📊 Dashboard</a>
+        <a href="{{ url_for('tables_list') }}">🪑 Quản lý bàn</a>
+        <a href="{{ url_for('logout') }}">🚪 Đăng xuất</a>
     </div>
 
-    <h3>Danh sách bàn</h3>
-    <table>
-        <thead>
-            <tr><th>Bàn</th><th>Trạng thái</th></tr>
-        </thead>
-        <tbody>
-            {% for table in tables %}
-            <tr>
-                <td>{{ table["name"] }}</td>
-                <td>{{ table["status"] }}</td>
-            </tr>
-            {% endfor %}
-        </tbody>
-    </table>
-</div>
-
+    <div class="main">
+        <div class="header">Xin chào Nhân viên 👋</div>
+        <div class="action-card">
+            <h3>Sẵn sàng phục vụ khách hàng?</h3>
+            <p>Kiểm tra sơ đồ bàn để đón khách và cập nhật trạng thái phục vụ nhanh nhất.</p>
+            <a href="{{ url_for('tables_list') }}" class="btn-start">MỞ SƠ ĐỒ BÀN</a>
+        </div>
+    </div>
 </body>
 </html>
-

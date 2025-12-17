@@ -1,33 +1,123 @@
-{% extends "dashboard_base.html" %}
-{% block content %}
-<h2>Danh sách bàn</h2>
-<table class="table-container">
-  <thead>
-    <tr><th>ID</th><th>Tên bàn</th><th>Trạng thái</th><th>Update</th></tr>
-  </thead>
-  <tbody>
-    {% for tb in tables %}
-    <tr>
-      <td>{{ tb.id }}</td>
-      <td>{{ tb.name }}</td>
-      <td class="status-{{ tb.status|lower }}">{{ tb.status }}</td>
-      <td><button class="button" onclick="updateTable({{ tb.id }})">Cập nhật</button></td>
-    </tr>
-    {% endfor %}
-  </tbody>
-</table>
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <title>Quản lý bàn | Starbucks</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <style>
+        /* CSS nội bộ để xử lý nhanh giao diện Grid và Trạng thái */
+        .main { margin-left: 240px; padding: 30px; }
+        .table-grid { 
+            display: grid; 
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); 
+            gap: 20px; 
+            margin-top: 20px;
+        }
+        .table-card {
+            background: white; border-radius: 15px; padding: 20px; text-align: center;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1); border-top: 8px solid #ccc; transition: 0.3s;
+        }
+        
+        /* Hiển thị màu theo trạng thái */
+        .table-card.trong { border-top-color: #2ecc71; }
+        .table-card.dang-phuc-vu { border-top-color: #e74c3c; }
+        .table-card.da-dat { border-top-color: #f1c40f; }
+
+        .status-badge {
+            font-size: 11px; font-weight: bold; padding: 5px 10px; border-radius: 20px;
+            text-transform: uppercase; display: inline-block; margin: 10px 0; color: white;
+        }
+        .bg-trong { background: #2ecc71; }
+        .bg-dang-phuc-vu { background: #e74c3c; }
+        .bg-da-dat { background: #f1c40f; }
+
+        /* ===== CSS CHO THÔNG BÁO TOAST (TB05) ===== */
+        #toast {
+            visibility: hidden; min-width: 250px; background-color: #1e3932; color: #fff;
+            text-align: center; border-radius: 8px; padding: 16px; position: fixed;
+            z-index: 1000; right: 30px; top: 30px; font-size: 16px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2); border-left: 5px solid #2ecc71;
+        }
+        #toast.show { visibility: visible; animation: fadein 0.5s, fadeout 0.5s 2s; }
+        @keyframes fadein { from {right: 0; opacity: 0;} to {right: 30px; opacity: 1;} }
+        @keyframes fadeout { from {right: 30px; opacity: 1;} to {right: 0; opacity: 0;} }
+    </style>
+</head>
+<body>
+
+<div id="toast">✅ Cập nhật trạng thái thành công!</div>
+
+<div class="sidebar">
+    <h2>Starbucks</h2>
+    <a href="{{ url_for('dashboard_admin' if session['role'] == 'admin' else 'dashboard_staff') }}">📊 Dashboard</a>
+    <a href="{{ url_for('tables_list') }}" style="background: rgba(255,255,255,0.1);">🪑 Quản lý bàn</a>
+    {% if session['role'] == 'admin' %}
+    <a href="{{ url_for('revenue_day') }}">📅 Doanh thu Ngày</a>
+    <a href="{{ url_for('revenue_month') }}">📈 Doanh thu Tháng</a>
+    {% endif %}
+    <a href="{{ url_for('logout') }}">🚪 Đăng xuất</a>
+</div>
+
+<div class="main">
+    <div class="header" style="font-size: 26px; color: #1e3932; font-weight: bold;">🪑 Sơ đồ bàn phục vụ</div>
+
+    <div class="search-container" style="margin: 20px 0;">
+        <input type="text" id="tableSearch" placeholder="Tìm tên bàn (VD: Ban 1)..." onkeyup="filterTables()" 
+               style="padding: 12px; width: 100%; max-width: 400px; border-radius: 10px; border: 1px solid #ddd; outline: none;">
+    </div>
+
+    <div class="table-grid" id="tableContainer">
+        {% for t in tables %}
+        {% set status_class = t.status | replace(' ', '-') %}
+        <div class="table-card {{ status_class }}" data-name="{{ t.name }}">
+            <h3 style="margin:0;">{{ t.name }}</h3>
+            <p style="color: #666; font-size: 14px;">🪑 Ghế: {{ t.capacity if t.capacity else 4 }}</p>
+            <div class="status-badge bg-{{ status_class }}">{{ t.status | upper }}</div>
+
+            <div class="action" style="border-top: 1px solid #eee; padding-top: 10px; margin-top: 10px;">
+                <label style="font-size: 12px; color: #999;">Đổi trạng thái:</label>
+                <select onchange="updateTableStatus({{ t.id }}, this.value)" 
+                        style="width: 100%; padding: 8px; border-radius: 5px; margin-top: 5px; cursor: pointer;">
+                    <option value="trong" {% if t.status == 'trong' %}selected{% endif %}>Trống</option>
+                    <option value="dang phuc vu" {% if t.status == 'dang phuc vu' %}selected{% endif %}>Đang phục vụ</option>
+                    <option value="da dat" {% if t.status == 'da dat' %}selected{% endif %}>Đã đặt</option>
+                </select>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
 
 <script>
-function updateTable(id){
-    let status = prompt("Nhập trạng thái mới (EMPTY / USING):");
-    fetch("/tables/update", {
-        method: "POST",
-        headers: {"Content-Type":"application/json"},
-        body: JSON.stringify({id:id, status:status})
-    }).then(res => res.json()).then(data=>{
-        if(data.success) location.reload();
-        else alert("Update lỗi!");
-    });
-}
+    function filterTables() {
+        let input = document.getElementById('tableSearch').value.toLowerCase();
+        document.querySelectorAll('.table-card').forEach(card => {
+            let name = card.getAttribute('data-name').toLowerCase();
+            card.style.display = name.includes(input) ? "block" : "none";
+        });
+    }
+
+    function updateTableStatus(tableId, newStatus) {
+        fetch('/tables/update', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ id: tableId, status: newStatus })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                // HIỆN THÔNG BÁO TOAST THAY CHO ALERT (TB05)
+                var x = document.getElementById("toast");
+                x.className = "show";
+                
+                // Đợi 1.5s để khách xem thông báo rồi mới làm mới trang (TB05)
+                setTimeout(function(){ 
+                    x.className = x.className.replace("show", ""); 
+                    location.reload(); 
+                }, 1500);
+            }
+        });
+    }
 </script>
-{% endblock %}
+</body>
+</html>

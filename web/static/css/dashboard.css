@@ -1,51 +1,123 @@
 * {
-    margin:0; padding:0; box-sizing:border-box; font-family: 'Segoe UI', sans-serif;
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Segoe UI', sans-serif;
 }
 
-/* Sidebar */
+/* ================= STARBUCKS COLOR ================= */
+:root {
+    --sb-dark: #006241;   /* xanh Starbucks đậm */
+    --sb-main: #00754a;   /* xanh chủ đạo */
+    --sb-light: #d4e9e2;  /* xanh nhạt */
+    --sb-bg: #f1f8f5;     /* nền tổng */
+    --sb-white: #ffffff;
+    --sb-muted: #5f6f68;
+}
+
+/* ================= SIDEBAR ================= */
 .sidebar {
     position: fixed;
-    left:0; top:0; width:220px; height:100%;
-    background:#1e3932;
-    padding:20px 0;
-    display:flex; flex-direction:column;
+    left: 0;
+    top: 0;
+    width: 220px;
+    height: 100%;
+    background: linear-gradient(180deg, var(--sb-dark), var(--sb-main));
+    padding: 20px 0;
+    display: flex;
+    flex-direction: column;
 }
+
 .sidebar h2 {
-    color:#fff; text-align:center; margin-bottom:30px;
+    color: var(--sb-white);
+    text-align: center;
+    margin-bottom: 30px;
 }
+
 .sidebar a {
-    color:#fff; padding:12px 20px; text-decoration:none; display:block;
-    transition:0.3s;
+    color: #ccebe0;
+    padding: 12px 20px;
+    text-decoration: none;
+    display: block;
+    transition: all 0.3s ease;
+    border-left: 4px solid transparent;
 }
+
 .sidebar a:hover {
-    background:#0f3d2e; border-left:4px solid #fff;
+    background: rgba(255,255,255,0.15);
+    border-left: 4px solid var(--sb-white);
+    color: var(--sb-white);
 }
 
-/* Main */
+/* ================= MAIN ================= */
 .main {
-    margin-left:220px; padding:30px;
+    margin-left: 220px;
+    padding: 30px;
+    background: var(--sb-bg);
+    min-height: 100vh;
 }
+
 .header {
-    font-size:24px; font-weight:600; margin-bottom:20px;
+    font-size: 24px;
+    font-weight: 600;
+    margin-bottom: 20px;
+    color: var(--sb-dark);
 }
 
-/* Cards */
+/* ================= CARDS ================= */
 .cards {
-    display:flex; gap:20px; margin-bottom:30px;
+    display: flex;
+    gap: 20px;
+    margin-bottom: 30px;
 }
-.card {
-    flex:1; background:#f3f3f3; padding:20px; border-radius:12px;
-    box-shadow:0 5px 15px rgba(0,0,0,0.1);
-}
-.card h3 { color:#1e3932; margin-bottom:10px; }
 
-/* Table */
+.card {
+    flex: 1;
+    background: var(--sb-light);
+    padding: 20px;
+    border-radius: 14px;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.12);
+    transition: 0.3s;
+}
+
+.card h3 {
+    color: var(--sb-dark);
+    margin-bottom: 10px;
+}
+
+.card p {
+    color: var(--sb-muted);
+    font-size: 14px;
+}
+
+.card:hover {
+    transform: translateY(-4px);
+    background: #c2dfd6;
+    box-shadow: 0 14px 30px rgba(0,0,0,0.18);
+}
+
+/* ================= TABLE ================= */
 table {
-    width:100%; border-collapse:collapse; background:#fff;
-    border-radius:12px; overflow:hidden; box-shadow:0 5px 15px rgba(0,0,0,0.1);
+    width: 100%;
+    border-collapse: collapse;
+    background: var(--sb-white);
+    border-radius: 14px;
+    overflow: hidden;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.12);
 }
-table th, table td {
-    padding:12px; text-align:left; border-bottom:1px solid #ddd;
+
+table th,
+table td {
+    padding: 12px;
+    text-align: left;
+    border-bottom: 1px solid #e5e7eb;
 }
-table th { background:#1e3932; color:#fff; }
-table tr:hover { background:#f3f3f3; }
+
+table th {
+    background: var(--sb-dark);
+    color: var(--sb-white);
+}
+
+table tr:hover {
+    background: var(--sb-bg);
+}

@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <title>Starbucks System | Verify OTP</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body class="auth-page">
+
+<div class="auth-container">
+    <div class="auth-form">
+        <h2>Verify OTP 📲</h2>
+        <p class="sub-text">Enter the OTP sent to your phone</p>
+
+        {% if error %}
+            <p style="color:red; text-align:center; margin-bottom:15px;">
+                {{ error }}
+            </p>
+        {% endif %}
+
+        <form method="POST">
+            <div class="input-group">
+                <input type="text" name="otp" placeholder="Enter OTP" required>
+            </div>
+
+            <button type="submit">Verify</button>
+        </form>
+    </div>
+</div>
+
+</body>
+</html>
