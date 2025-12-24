@@ -85,29 +85,25 @@
         localStorage.clear();
 
         function handleLogin() {
-            const u = document.getElementById('user').value.toLowerCase().trim();
-            const p = document.getElementById('pass').value;
-            const err = document.getElementById('error');
-            const btn = document.querySelector('button[onclick="handleLogin()"]');
+    const u = document.getElementById('user').value.toLowerCase().trim();
+    const p = document.getElementById('pass').value;
+    const err = document.getElementById('error');
+    const btn = document.querySelector('button[onclick="handleLogin()"]');
 
-            if (p === '123' && (u === 'admin' || u === 'staff')) {
-                btn.innerHTML = '<i class="fa-solid fa-circle-notch animate-spin"></i> Authenticating...';
-                btn.style.pointerEvents = 'none';
-                
-                localStorage.setItem('isLoggedIn', 'true');
-                localStorage.setItem('userRole', u);
+    if (p === '123' && (u === 'admin' || u === 'staff')) {
+        btn.innerHTML = '<i class="fa-solid fa-circle-notch animate-spin"></i> Authenticating...';
+        
+        localStorage.setItem('isLoggedIn', 'true');
+        localStorage.setItem('userRole', u);
 
-                setTimeout(() => {
-                    // SỬA ĐỂ CHẠY TRÊN GITHUB PAGES
-                    window.location.href = u + '.html'; 
-                }, 800);
-            } else {
-                err.classList.remove('hidden');
-                document.querySelector('.relative.z-10').animate([
-                    { transform: 'translateX(-5px)' }, { transform: 'translateX(5px)' }, { transform: 'translateX(0)' }
-                ], { duration: 200 });
-            }
-        }
+        // THÊM DẤU ./ ĐỂ CHẮC CHẮN NÓ TÌM FILE CÙNG CẤP
+        setTimeout(() => {
+            window.location.href = './' + u + '.html'; 
+        }, 800);
+    } else {
+        err.classList.remove('hidden');
+    }
+}
 
         function openForgot() { document.getElementById('forgotModal').classList.remove('hidden'); document.querySelectorAll('.otp-input')[0].focus(); }
         function closeForgot() { document.getElementById('forgotModal').classList.add('hidden'); }
