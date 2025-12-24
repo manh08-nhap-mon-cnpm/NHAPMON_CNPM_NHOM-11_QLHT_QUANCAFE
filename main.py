@@ -1,8 +1,8 @@
 from flask import Flask, render_template
 
-# Khai báo cho Flask biết templates và static nằm trong folder 'web'
+# Sửa dòng này: template_folder='.' nghĩa là tìm file HTML ngay tại thư mục gốc
 app = Flask(__name__, 
-            template_folder='web/templates', 
+            template_folder='.', 
             static_folder='web/static')
 
 @app.route('/')
@@ -18,4 +18,4 @@ def staff():
     return render_template('staff.html')
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(debug=True, port=5000)
