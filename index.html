@@ -96,9 +96,11 @@
         localStorage.setItem('isLoggedIn', 'true');
         localStorage.setItem('userRole', u);
 
-        // THÊM DẤU ./ ĐỂ CHẮC CHẮN NÓ TÌM FILE CÙNG CẤP
+        // ÉP CHỮ CÁI ĐẦU VIẾT HOA ĐỂ KHỚP VỚI Admin.html VÀ Staff.html
+        const fileName = u.charAt(0).toUpperCase() + u.slice(1) + '.html';
+
         setTimeout(() => {
-            window.location.href = './' + u + '.html'; 
+            window.location.href = './' + fileName; 
         }, 800);
     } else {
         err.classList.remove('hidden');
