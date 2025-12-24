@@ -11,8 +11,8 @@
         :root { --sb-green: #007042; --sb-dark: #1e3932; }
         body { font-family: 'Plus Jakarta Sans', sans-serif; }
         .bg-starbucks { 
-            /* Đường dẫn ảnh chuẩn cho cấu trúc web/static/images/ */
-            background-image: url('./static/images/login_bg.jpg');
+            /* Đã sửa: Vì index.html ở trong /web, chỉ cần gọi thẳng vào /static */
+            background-image: url('./static/images/login_bg.jpg'); 
             background-size: cover; 
             background-position: center; 
         }
@@ -52,7 +52,6 @@
     </div>
 
     <script>
-        // Xóa sạch dữ liệu cũ khi load trang login
         localStorage.clear();
 
         function handleLogin() {
@@ -61,7 +60,6 @@
             const err = document.getElementById('error');
             const btn = document.querySelector('button[onclick="handleLogin()"]');
 
-            // Kiểm tra mật khẩu 123 và user admin/staff
             if (p === '123' && (u === 'admin' || u === 'staff')) {
                 btn.innerHTML = '<i class="fa-solid fa-circle-notch animate-spin"></i> Authenticating...';
                 
@@ -69,19 +67,19 @@
                 localStorage.setItem('userRole', u);
 
                 setTimeout(() => {
-                    // CHUYỂN ĐẾN FILE VIẾT THƯỜNG (admin.html hoặc staff.html)
-                    window.location.href = u + '.html'; 
+                    /* Đã sửa: Thêm ./ để trình duyệt tìm file .html 
+                       ngay trong cùng thư mục /web/
+                    */
+                    window.location.href = './' + u + '.html'; 
                 }, 800);
             } else {
                 err.classList.remove('hidden');
-                // Hiệu ứng rung khi sai
                 document.querySelector('.relative.z-10').animate([
                     { transform: 'translateX(-5px)' }, { transform: 'translateX(5px)' }, { transform: 'translateX(0)' }
                 ], { duration: 200 });
             }
         }
 
-        // Nhấn Enter để đăng nhập
         document.addEventListener('keypress', (e) => {
             if (e.key === 'Enter') handleLogin();
         });
