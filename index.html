@@ -10,11 +10,11 @@
         :root { --sb-green: #007042; --sb-dark: #1e3932; }
         body { font-family: 'Plus Jakarta Sans', sans-serif; }
         .bg-starbucks { 
-            background-image: url('static/images/login_bg.jpg'); 
+            /* SỬA ĐƯỜNG DẪN ẢNH ĐỂ CHẠY TRÊN GITHUB */
+            background-image: url('web/static/images/login_bg.jpg'); 
             background-size: cover; 
             background-position: center; 
         }
-        /* Style cho ô nhập OTP */
         .otp-input:focus {
             border-color: #007042;
             box-shadow: 0 0 0 4px rgba(0, 112, 66, 0.1);
@@ -37,10 +37,10 @@
 
             <div class="w-full space-y-4">
                 <input id="user" type="text" placeholder="Username" 
-                       class="w-full px-6 py-4 rounded-2xl border border-gray-200 focus:border-[#007042] focus:ring-4 focus:ring-[#007042]/10 outline-none transition-all font-medium">
+                       class="w-full px-6 py-4 rounded-2xl border border-gray-200 focus:border-[#007042] outline-none transition-all font-medium">
                 
                 <input id="pass" type="password" placeholder="Password" 
-                       class="w-full px-6 py-4 rounded-2xl border border-gray-200 focus:border-[#007042] focus:ring-4 focus:ring-[#007042]/10 outline-none transition-all font-medium">
+                       class="w-full px-6 py-4 rounded-2xl border border-gray-200 focus:border-[#007042] outline-none transition-all font-medium">
             </div>
 
             <div class="w-full flex justify-between items-center my-6 px-2">
@@ -57,7 +57,6 @@
 
             <p id="error" class="mt-4 text-red-500 text-xs font-bold hidden">❌ Invalid Credentials. Try again.</p>
         </div>
-
         <p class="text-center mt-8 text-white/60 text-[10px] font-bold uppercase tracking-widest">© 2024 Starbucks Coffee Company</p>
     </div>
 
@@ -71,14 +70,14 @@
             <p class="text-gray-500 text-xs font-medium mb-6">Enter default OTP: <span class="font-bold text-[#007042]">9999</span></p>
             
             <div class="flex gap-2 justify-center mb-6">
-                <input type="text" maxlength="1" class="otp-input w-12 h-16 border-2 border-gray-100 rounded-2xl text-center text-2xl font-black focus:border-[#007042] outline-none">
-                <input type="text" maxlength="1" class="otp-input w-12 h-16 border-2 border-gray-100 rounded-2xl text-center text-2xl font-black focus:border-[#007042] outline-none">
-                <input type="text" maxlength="1" class="otp-input w-12 h-16 border-2 border-gray-100 rounded-2xl text-center text-2xl font-black focus:border-[#007042] outline-none">
-                <input type="text" maxlength="1" class="otp-input w-12 h-16 border-2 border-gray-100 rounded-2xl text-center text-2xl font-black focus:border-[#007042] outline-none">
+                <input type="text" maxlength="1" class="otp-input w-12 h-16 border-2 border-gray-100 rounded-2xl text-center text-2xl font-black outline-none">
+                <input type="text" maxlength="1" class="otp-input w-12 h-16 border-2 border-gray-100 rounded-2xl text-center text-2xl font-black outline-none">
+                <input type="text" maxlength="1" class="otp-input w-12 h-16 border-2 border-gray-100 rounded-2xl text-center text-2xl font-black outline-none">
+                <input type="text" maxlength="1" class="otp-input w-12 h-16 border-2 border-gray-100 rounded-2xl text-center text-2xl font-black outline-none">
             </div>
 
-            <button onclick="confirmReset()" class="w-full bg-[#1e3932] text-white font-bold py-4 rounded-2xl mb-4 hover:bg-[#007042] transition-all">Verify OTP</button>
-            <button onclick="closeForgot()" class="text-xs font-bold text-gray-400 uppercase tracking-widest hover:text-red-500">Cancel</button>
+            <button onclick="confirmReset()" class="w-full bg-[#1e3932] text-white font-bold py-4 rounded-2xl mb-4 hover:bg-[#007042]">Verify OTP</button>
+            <button onclick="closeForgot()" class="text-xs font-bold text-gray-400 uppercase hover:text-red-500">Cancel</button>
         </div>
     </div>
 
@@ -86,67 +85,45 @@
         localStorage.clear();
 
         function handleLogin() {
-    const u = document.getElementById('user').value.toLowerCase().trim();
-    const p = document.getElementById('pass').value;
-    const err = document.getElementById('error');
-    const btn = document.querySelector('button[onclick="handleLogin()"]');
+            const u = document.getElementById('user').value.toLowerCase().trim();
+            const p = document.getElementById('pass').value;
+            const err = document.getElementById('error');
+            const btn = document.querySelector('button[onclick="handleLogin()"]');
 
-    if (p === '123' && (u === 'admin' || u === 'staff')) {
-        // Hiệu ứng Loading cho sang chảnh
-        btn.innerHTML = '<i class="fa-solid fa-circle-notch animate-spin"></i> Authenticating...';
-        btn.style.pointerEvents = 'none';
-        
-        localStorage.setItem('isLoggedIn', 'true');
-        localStorage.setItem('userRole', u);
+            if (p === '123' && (u === 'admin' || u === 'staff')) {
+                btn.innerHTML = '<i class="fa-solid fa-circle-notch animate-spin"></i> Authenticating...';
+                btn.style.pointerEvents = 'none';
+                
+                localStorage.setItem('isLoggedIn', 'true');
+                localStorage.setItem('userRole', u);
 
-        setTimeout(() => {
-            window.location.href = u + '.html'; 
-        }, 1000); // Đợi 1 giây để tạo cảm giác hệ thống đang kiểm tra
-    } else {
-        err.classList.remove('hidden');
-        // Hiệu ứng rung khi sai pass
-        document.querySelector('.relative.z-10').animate([
-            { transform: 'translateX(-5px)' }, { transform: 'translateX(5px)' }, { transform: 'translateX(0)' }
-        ], { duration: 200 });
-    }
-}
-
-        // HÀM XỬ LÝ FORGOT PASSWORD
-        function openForgot() {
-            document.getElementById('forgotModal').classList.remove('hidden');
-            const inputs = document.querySelectorAll('.otp-input');
-            inputs.forEach(i => i.value = '');
-            inputs[0].focus();
-        }
-
-        function closeForgot() {
-            document.getElementById('forgotModal').classList.add('hidden');
-        }
-
-        function confirmReset() {
-            let otp = "";
-            document.querySelectorAll('.otp-input').forEach(i => otp += i.value);
-            if (otp === "9999") {
-                alert("✅ Security verified! Your password has been reset to: 123");
-                closeForgot();
+                setTimeout(() => {
+                    // SỬA ĐỂ CHẠY TRÊN GITHUB PAGES
+                    window.location.href = u + '.html'; 
+                }, 800);
             } else {
-                alert("❌ Invalid OTP.");
+                err.classList.remove('hidden');
+                document.querySelector('.relative.z-10').animate([
+                    { transform: 'translateX(-5px)' }, { transform: 'translateX(5px)' }, { transform: 'translateX(0)' }
+                ], { duration: 200 });
             }
         }
 
-        // Logic tự nhảy ô OTP
+        function openForgot() { document.getElementById('forgotModal').classList.remove('hidden'); document.querySelectorAll('.otp-input')[0].focus(); }
+        function closeForgot() { document.getElementById('forgotModal').classList.add('hidden'); }
+        function confirmReset() {
+            let otp = "";
+            document.querySelectorAll('.otp-input').forEach(i => otp += i.value);
+            if (otp === "9999") { alert("✅ Security verified! Your password has been reset to: 123"); closeForgot(); } 
+            else { alert("❌ Invalid OTP."); }
+        }
+
         document.querySelectorAll('.otp-input').forEach((input, idx, inputs) => {
-            input.addEventListener('input', () => {
-                if (input.value && inputs[idx + 1]) inputs[idx + 1].focus();
-            });
-            input.addEventListener('keydown', (e) => {
-                if (e.key === 'Backspace' && !input.value && inputs[idx - 1]) inputs[idx - 1].focus();
-            });
+            input.addEventListener('input', () => { if (input.value && inputs[idx + 1]) inputs[idx + 1].focus(); });
+            input.addEventListener('keydown', (e) => { if (e.key === 'Backspace' && !input.value && inputs[idx - 1]) inputs[idx - 1].focus(); });
         });
 
-        document.addEventListener('keypress', (e) => {
-            if (e.key === 'Enter') handleLogin();
-        });
+        document.addEventListener('keypress', (e) => { if (e.key === 'Enter') handleLogin(); });
     </script>
 </body>
 </html>
