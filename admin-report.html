@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <title>Starbucks Analytics | Real-time Business Intelligence</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script>tailwind.config = { darkMode: 'class' }</script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&display=swap');
+        :root { --sb-forest: #1e3932; --sb-green: #007042; }
+        body { font-family: 'Plus Jakarta Sans', sans-serif; background-color: #f8fafc; transition: 0.5s; }
+        .dark body { background-color: #0b1613; color: #d4e9e2; }
+        
+        .sidebar-floating { background: var(--sb-forest); width: 70px; height: calc(100vh - 40px); position: fixed; top: 20px; left: 20px; border-radius: 35px; z-index: 100; display: flex; flex-direction: column; align-items: center; padding: 1.5rem 0; }
+        .nav-icon { width: 46px; height: 46px; display: flex; align-items: center; justify-content: center; border-radius: 16px; cursor: pointer; color: rgba(255,255,255,0.3); transition: 0.3s; margin-bottom: 0.8rem; position: relative; }
+        .nav-icon:hover, .active-page { background: rgba(255,255,255,0.1); color: #fff; }
+        .tooltip { position: absolute; left: 60px; background: #1e3932; color: white; padding: 5px 10px; border-radius: 8px; font-size: 10px; font-weight: bold; transform: scale(0); transition: 0.2s; white-space: nowrap; pointer-events: none; }
+        .nav-icon:hover .tooltip { transform: scale(1); }
+
+        main { margin-left: 110px; padding: 40px; }
+        .bento-card { background: white; border-radius: 30px; padding: 30px; border: 1px solid rgba(0,0,0,0.03); transition: 0.4s; }
+        .dark .bento-card { background: #162621; border-color: rgba(255,255,255,0.05); }
+        .txt-black { font-weight: 800; font-style: italic; text-transform: uppercase; letter-spacing: -0.05em; }
+    </style>
+</head>
+<body class="dark:text-white">
+
+    <aside class="sidebar-floating shadow-2xl">
+    <div class="mb-8">
+        <img src="https://upload.wikimedia.org/wikipedia/en/d/d3/Starbucks_Corporation_Logo_2011.svg" class="w-9 bg-white p-1 rounded-xl shadow-sm">
+    </div>
+    <nav class="flex-1">
+        <div onclick="location.href='admin-dashboard.html'" class="nav-icon" id="nav-dash">
+            <i class="fa-solid fa-chart-pie"></i>
+            <span class="tooltip">Báo cáo</span>
+        </div>
+        <div onclick="location.href='admin-tables.html'" class="nav-icon" id="nav-tables">
+            <i class="fa-solid fa-layer-group"></i>
+            <span class="tooltip">Sơ đồ bàn</span>
+        </div>
+        <div onclick="location.href='admin-menu.html'" class="nav-icon" id="nav-menu">
+            <i class="fa-solid fa-mug-hot"></i>
+            <span class="tooltip">Thực đơn</span>
+        </div>
+        <div onclick="location.href='inventory.html'" class="nav-icon" id="nav-inv">
+            <i class="fa-solid fa-boxes-stacked"></i>
+            <span class="tooltip">Kho hàng</span>
+        </div>
+        <div onclick="location.href='hr.html'" class="nav-icon" id="nav-hr">
+            <i class="fa-solid fa-user-shield"></i>
+            <span class="tooltip">Nhân sự</span>
+        </div>
+        <div onclick="location.href='admin-settings.html'" class="nav-icon" id="nav-set">
+            <i class="fa-solid fa-gears"></i>
+            <span class="tooltip">Cài đặt</span>
+        </div>
+    </nav>
+    <button onclick="handleLogout()" class="nav-icon logout-btn mt-auto">
+        <i class="fa-solid fa-power-off"></i>
+        <span class="tooltip">Đăng xuất</span>
+    </button>
+</aside>
+
+    <main>
+        <header class="flex justify-between items-center mb-10">
+            <div>
+                <p class="text-[10px] font-black text-green-600 tracking-widest uppercase italic">Executive Insights</p>
+                <h1 class="text-3xl txt-black">BI Analytics Center</h1>
+            </div>
+            <div class="flex gap-4">
+                <button onclick="exportData()" class="px-6 py-3 bg-[#1e3932] text-white rounded-2xl font-bold text-xs hover:bg-black transition shadow-lg">XUẤT BÁO CÁO (UC43)</button>
+            </div>
+        </header>
+
+        <div class="grid grid-cols-12 gap-6">
+            <div class="col-span-12 lg:col-span-8 bento-card shadow-sm">
+                <div class="flex justify-between items-center mb-6">
+                    <h3 class="txt-black text-sm italic">Doanh thu theo giờ (UC40)</h3>
+                    <div class="flex items-center gap-2">
+                        <span id="sync-status" class="w-2 h-2 bg-green-500 rounded-full animate-ping"></span>
+                        <span class="text-[10px] font-bold text-gray-400">LIVE SYNC</span>
+                    </div>
+                </div>
+                <canvas id="revenueChart" height="120"></canvas>
+            </div>
+
+            <div class="col-span-12 lg:col-span-4 bento-card shadow-sm">
+                <h3 class="txt-black text-sm mb-6">Trạng thái nhân sự (UC32)</h3>
+                <div class="relative flex justify-center items-center">
+                    <canvas id="staffPieChart"></canvas>
+                    <div class="absolute text-center">
+                        <p id="total-staff" class="text-3xl font-black">0</p>
+                        <p class="text-[9px] font-bold text-gray-400 uppercase">Partner</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-span-12 bento-card">
+                <h3 class="txt-black text-sm mb-6 uppercase">Nhật ký giao dịch thời gian thực (UC44)</h3>
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left text-[11px]">
+                        <thead>
+                            <tr class="text-gray-400 uppercase tracking-widest border-b border-gray-100 dark:border-white/5">
+                                <th class="pb-4 pl-4">Thời gian</th>
+                                <th class="pb-4">Partner</th>
+                                <th class="pb-4">Nội dung thao tác</th>
+                                <th class="pb-4 text-right pr-4">Số tiền</th>
+                            </tr>
+                        </thead>
+                        <tbody id="realtime-logs" class="font-bold">
+                            </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        let revChart, staffChart;
+
+        function initCharts() {
+            // 1. DỮ LIỆU NHÂN SỰ (UC32)
+            const staff = JSON.parse(localStorage.getItem('sb_hr')) || [];
+            const active = staff.filter(s => s.status === 'Active').length;
+            const locked = staff.filter(s => s.status === 'Locked').length;
+            document.getElementById('total-staff').innerText = staff.length;
+
+            const ctxS = document.getElementById('staffPieChart').getContext('2d');
+            staffChart = new Chart(ctxS, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Sẵn sàng', 'Bị khóa'],
+                    datasets: [{ data: [active, locked], backgroundColor: ['#007042', '#ef4444'], borderWeight: 0 }]
+                },
+                options: { cutout: '80%', plugins: { legend: { display: false } } }
+            });
+
+            // 2. DỮ LIỆU DOANH THU (UC40)
+            const logs = JSON.parse(localStorage.getItem('sb_logs')) || [];
+            const hours = ['08:00', '10:00', '12:00', '14:00', '16:00', '18:00', '20:00'];
+            // Giả lập dữ liệu doanh thu dựa trên log (trong thực tế sẽ bóc tách chuỗi số từ log)
+            const dataRev = hours.map(() => Math.floor(Math.random() * 500000) + 200000);
+
+            const ctxR = document.getElementById('revenueChart').getContext('2d');
+            revChart = new Chart(ctxR, {
+                type: 'line',
+                data: {
+                    labels: hours,
+                    datasets: [{
+                        label: 'Doanh thu (VNĐ)',
+                        data: dataRev,
+                        borderColor: '#007042',
+                        backgroundColor: 'rgba(0,112,66,0.1)',
+                        fill: true,
+                        tension: 0.4
+                    }]
+                },
+                options: { plugins: { legend: { display: false } } }
+            });
+
+            renderLogs();
+        }
+
+        function renderLogs() {
+            const logs = JSON.parse(localStorage.getItem('sb_logs')) || [];
+            const tbody = document.getElementById('realtime-logs');
+            tbody.innerHTML = logs.slice(-10).reverse().map(l => `
+                <tr class="border-b border-gray-50 dark:border-white/5 hover:bg-gray-50 dark:hover:bg-white/5 transition">
+                    <td class="py-4 pl-4 text-gray-400">${l.time}</td>
+                    <td class="py-4 uppercase text-green-600">${l.partner}</td>
+                    <td class="py-4">${l.action}</td>
+                    <td class="py-4 text-right pr-4 italic font-black text-[#cba258]">${l.total || '---'}</td>
+                </tr>
+            `).join('');
+        }
+
+        function exportData() {
+            Swal.fire({
+                title: 'ĐANG TRÍCH XUẤT (UC43)',
+                text: 'Hệ thống đang nén dữ liệu BI sang định dạng PDF...',
+                timer: 2000,
+                didOpen: () => { Swal.showLoading(); }
+            }).then(() => {
+                Swal.fire('Thành công', 'Báo cáo đã được gửi tới Cloud Starbucks.', 'success');
+            });
+        }
+
+        // Lắng nghe real-time từ POS
+        window.addEventListener('storage', (e) => {
+            if (e.key === 'sb_logs') {
+                renderLogs();
+                // Nháy đèn xanh báo hiệu có đơn mới
+                const dot = document.getElementById('sync-status');
+                dot.classList.replace('bg-green-500', 'bg-blue-500');
+                setTimeout(() => dot.classList.replace('bg-blue-500', 'bg-green-500'), 1000);
+            }
+            if (e.key === 'hub_theme') {
+                location.reload(); // Cập nhật màu biểu đồ theo theme
+            }
+        });
+
+        window.onload = () => {
+            const theme = localStorage.getItem('hub_theme') || 'light';
+            if (theme === 'dark') document.documentElement.classList.add('dark');
+            initCharts();
+        };
+    </script>
+</body>
+</html>

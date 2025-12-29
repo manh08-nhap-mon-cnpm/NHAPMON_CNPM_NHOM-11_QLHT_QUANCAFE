@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <title>Starbucks Global Executive | Hub</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>tailwind.config = { darkMode: 'class' }</script>
+    
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;700;800&display=swap');
+        :root { --sb-forest: #1e3932; --sb-green: #007042; }
+        body { font-family: 'Plus Jakarta Sans', sans-serif; letter-spacing: -0.02em; transition: all 0.5s ease; background-color: #f0f2f5; }
+
+        /* Sidebar & Header lơ lửng */
+        .sidebar-floating { background: #1e3932; width: 70px; height: calc(100vh - 40px); position: fixed; top: 20px; left: 20px; border-radius: 35px; z-index: 100; display: flex; flex-direction: column; align-items: center; padding: 1.5rem 0; box-shadow: 0 20px 50px rgba(0,0,0,0.2); }
+        .nav-icon { width: 46px; height: 46px; display: flex; align-items: center; justify-content: center; border-radius: 16px; cursor: pointer; color: rgba(255, 255, 255, 0.3); transition: 0.3s; margin-bottom: 0.8rem; position: relative; }
+        .nav-icon:hover, .active-page { background: rgba(255, 255, 255, 0.15); color: #fff; transform: scale(1.1); }
+        .tooltip { position: absolute; left: 65px; background: #1e3932; color: white; padding: 6px 12px; border-radius: 10px; font-size: 9px; font-weight: 800; text-transform: uppercase; white-space: nowrap; transform: scale(0); transition: 0.2s; z-index: 1000; }
+        .nav-icon:hover .tooltip { transform: scale(1); }
+
+        /* Layout */
+        main { margin-left: 110px !important; padding: 110px 40px 40px 0 !important; }
+        .glass-header { background: rgba(240, 242, 245, 0.8); backdrop-filter: blur(15px); left: 110px; width: calc(100% - 130px); border-radius: 25px; top: 15px; height: 75px; z-index: 90; }
+
+        /* Bento Cards xịn */
+        .bento-card { border-radius: 30px; background: white; border: 1px solid rgba(0,0,0,0.02); transition: 0.4s; overflow: hidden; }
+        .bento-card:hover { transform: translateY(-5px); box-shadow: 0 20px 40px rgba(0,0,0,0.05); }
+        .dark body { background-color: #0b1613; color: #d4e9e2; }
+        .dark .bento-card { background: #162621; border: 1px solid rgba(255,255,255,0.05); }
+        
+        /* Chữ láo */
+        .txt-black { font-weight: 800; font-style: italic; text-transform: uppercase; letter-spacing: -0.05em; }
+    </style>
+</head>
+<body class="flex">
+
+    <aside class="sidebar-floating shadow-2xl">
+    <div class="mb-8">
+        <img src="https://upload.wikimedia.org/wikipedia/en/d/d3/Starbucks_Corporation_Logo_2011.svg" class="w-9 bg-white p-1 rounded-xl shadow-sm">
+    </div>
+    <nav class="flex-1">
+        <div onclick="location.href='admin-dashboard.html'" class="nav-icon" id="nav-dash">
+            <i class="fa-solid fa-chart-pie"></i>
+            <span class="tooltip">Báo cáo</span>
+        </div>
+        <div onclick="location.href='admin-tables.html'" class="nav-icon" id="nav-tables">
+            <i class="fa-solid fa-layer-group"></i>
+            <span class="tooltip">Sơ đồ bàn</span>
+        </div>
+        <div onclick="location.href='admin-menu.html'" class="nav-icon" id="nav-menu">
+            <i class="fa-solid fa-mug-hot"></i>
+            <span class="tooltip">Thực đơn</span>
+        </div>
+        <div onclick="location.href='inventory.html'" class="nav-icon" id="nav-inv">
+            <i class="fa-solid fa-boxes-stacked"></i>
+            <span class="tooltip">Kho hàng</span>
+        </div>
+        <div onclick="location.href='hr.html'" class="nav-icon" id="nav-hr">
+            <i class="fa-solid fa-user-shield"></i>
+            <span class="tooltip">Nhân sự</span>
+        </div>
+        <div onclick="location.href='admin-settings.html'" class="nav-icon" id="nav-set">
+            <i class="fa-solid fa-gears"></i>
+            <span class="tooltip">Cài đặt</span>
+        </div>
+    </nav>
+    <button onclick="handleLogout()" class="nav-icon logout-btn mt-auto">
+        <i class="fa-solid fa-power-off"></i>
+        <span class="tooltip">Đăng xuất</span>
+    </button>
+</aside>
+
+    <header class="fixed right-5 flex justify-between items-center px-10 glass-header shadow-lg">
+        <div>
+            <p id="txt-sub" class="text-[9px] font-black tracking-[0.4em] text-gray-400 uppercase">Global Strategy</p>
+            <h1 id="txt-title" class="text-xl txt-black text-[#1e3932]">Trung Tâm Điều Khiển</h1>
+        </div>
+        <div class="flex items-center gap-3">
+            <div class="flex bg-gray-200/50 dark:bg-white/5 p-1 rounded-xl">
+                <button onclick="setLang('VN')" id="btn-vn" class="px-3 py-1.5 text-[9px] font-black rounded-lg transition-all">VN</button>
+                <button onclick="setLang('EN')" id="btn-en" class="px-3 py-1.5 text-[9px] font-black rounded-lg transition-all">EN</button>
+            </div>
+            <button onclick="toggleDarkMode()" class="w-10 h-10 bg-white dark:bg-white/10 rounded-xl flex items-center justify-center"><i id="mode-icon" class="fa-solid fa-moon"></i></button>
+            <button onclick="processLogout()" class="w-10 h-10 bg-red-50 text-red-500 rounded-xl hover:bg-red-500 hover:text-white transition-all"><i class="fa-solid fa-power-off text-xs"></i></button>
+        </div>
+    </header>
+
+    <main class="flex-1">
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8 mr-5">
+            <div class="bento-card p-8 border-l-[12px] border-[#007042]">
+                <p id="txt-rev-day" class="text-[9px] font-black text-gray-400 uppercase mb-2">Hôm nay</p>
+                <h2 class="text-4xl font-black text-[#1e3932] italic">12.000.000đ</h2>
+                <p class="text-[10px] text-green-500 font-bold mt-2">▲ 15% vs Yesterday</p>
+            </div>
+            <div class="bento-card p-8 border-l-[12px] border-[#cba258]">
+                <p id="txt-rev-month" class="text-[9px] font-black text-gray-400 uppercase mb-2">Chỉ tiêu tháng</p>
+                <h2 class="text-4xl font-black text-[#1e3932] italic">300.000.000đ</h2>
+                <p class="text-[10px] text-amber-500 font-bold mt-2 italic">85% Completed</p>
+            </div>
+            <div class="bento-card p-8 bg-[#1e3932] text-white">
+                <p class="text-[9px] font-black text-white/50 uppercase mb-2">Tổng Đơn Hàng</p>
+                <h2 class="text-4xl font-black italic">1,248</h2>
+                <p class="text-[10px] text-white/70 font-bold mt-2 italic">Dữ liệu thời gian thực</p>
+            </div>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8 mr-5">
+            <div class="bento-card p-10 lg:col-span-2">
+                <div class="flex justify-between items-center mb-8">
+                    <h3 id="txt-week" class="text-lg txt-black">Phân Tích Tuần</h3>
+                    <div class="flex bg-gray-100 dark:bg-white/5 p-1 rounded-xl">
+                        <button onclick="changeChartType('bar')" class="px-5 py-2 text-[9px] font-black rounded-lg">BAR</button>
+                        <button onclick="changeChartType('line')" class="px-5 py-2 text-[9px] font-black rounded-lg">LINE</button>
+                    </div>
+                </div>
+                <div class="h-[300px]"><canvas id="mainChart"></canvas></div>
+            </div>
+            <div class="bento-card p-10 flex flex-col items-center">
+                <h3 id="txt-best" class="text-lg txt-black mb-8">Top Sản Phẩm</h3>
+                <canvas id="bestSellerChart"></canvas>
+            </div>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-4 gap-6 mr-5 mb-10">
+            <div class="bento-card p-8 lg:col-span-1">
+                <h3 class="text-[11px] font-black uppercase mb-6 text-gray-400 italic">Partner of the Month</h3>
+                <div class="flex items-center gap-4 bg-gray-50 dark:bg-white/5 p-4 rounded-2xl mb-4">
+                    <div class="w-12 h-12 bg-[#007042] rounded-full flex items-center justify-center text-white font-black shadow-lg">VH</div>
+                    <div>
+                        <p class="text-xs font-black">Vân Hà</p>
+                        <p class="text-[10px] text-gray-400">Barista Level 4</p>
+                    </div>
+                </div>
+                <div class="flex justify-between text-[10px] font-bold"><span class="text-gray-400">Score:</span><span class="text-[#007042]">9.8/10</span></div>
+            </div>
+            
+            <div class="bento-card p-8 lg:col-span-2">
+                <h3 class="text-[11px] font-black uppercase mb-6 text-gray-400 italic">Inventory Status (Live)</h3>
+                <div class="space-y-4">
+                    <div>
+                        <div class="flex justify-between text-[10px] font-black uppercase mb-1"><span>Arabica Beans</span><span class="text-red-500">LOW (12kg)</span></div>
+                        <div class="w-full bg-gray-100 h-1.5 rounded-full"><div class="bg-red-500 w-[15%] h-full"></div></div>
+                    </div>
+                    <div>
+                        <div class="flex justify-between text-[10px] font-black uppercase mb-1"><span>Fresh Milk</span><span>GOOD (45L)</span></div>
+                        <div class="w-full bg-gray-100 h-1.5 rounded-full"><div class="bg-[#007042] w-[75%] h-full"></div></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="bento-card p-8 lg:col-span-1 bg-gray-50 dark:bg-white/5">
+                <h3 class="text-[11px] font-black uppercase mb-4 text-gray-400 italic">System Logs</h3>
+                <div class="text-[9px] space-y-3 font-medium overflow-y-auto max-h-[120px]">
+                    <p class="border-l-2 border-green-500 pl-2 text-gray-500">14:20 - Đơn hàng #1290 thanh toán thành công.</p>
+                    <p class="border-l-2 border-amber-500 pl-2 text-gray-500">14:15 - Bàn số 5 yêu cầu thanh toán.</p>
+                    <p class="border-l-2 border-red-500 pl-2 text-gray-500">13:50 - Cảnh báo: Sắp hết hạt cà phê.</p>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        // --- LOGIC CHUNG ---
+        const langData = {
+            VN: { title: "Trung Tâm Điều Khiển", sub: "Global Strategy", revDay: "Doanh thu hôm nay", revMonth: "Chỉ tiêu tháng", week: "Phân Tích Tuần", best: "Top Sản Phẩm" },
+            EN: { title: "Control Center", sub: "Global Strategy", revDay: "Today's Revenue", revMonth: "Monthly Target", week: "Weekly Analysis", best: "Top Products" }
+        };
+
+        function setLang(lang) {
+            document.getElementById('txt-title').innerText = langData[lang].title;
+            document.getElementById('txt-sub').innerText = langData[lang].sub;
+            document.getElementById('txt-rev-day').innerText = langData[lang].revDay;
+            document.getElementById('txt-rev-month').innerText = langData[lang].revMonth;
+            document.getElementById('txt-week').innerText = langData[lang].week;
+            document.getElementById('txt-best').innerText = langData[lang].best;
+            
+            document.getElementById('btn-vn').className = lang === 'VN' ? 'px-3 py-1.5 text-[9px] font-black rounded-lg bg-[#1e3932] text-white' : 'px-3 py-1.5 text-[9px] font-black rounded-lg text-gray-500';
+            document.getElementById('btn-en').className = lang === 'EN' ? 'px-3 py-1.5 text-[9px] font-black rounded-lg bg-[#1e3932] text-white' : 'px-3 py-1.5 text-[9px] font-black rounded-lg text-gray-500';
+            localStorage.setItem('hub_lang', lang);
+        }
+
+        let mainChart;
+        function initMainChart(type) {
+            const ctx = document.getElementById('mainChart').getContext('2d');
+            if (mainChart) mainChart.destroy();
+            mainChart = new Chart(ctx, {
+                type: type,
+                data: {
+                    labels: ['T2', 'T3', 'T4', 'T5', 'T6', 'T7', 'CN'],
+                    datasets: [{
+                        data: [8, 11, 9, 14, 12, 12, 18],
+                        backgroundColor: '#007042', borderColor: '#1e3932', borderWidth: 2, borderRadius: 10, fill: type === 'line', tension: 0.4
+                    }]
+                },
+                options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { y: { display: false }, x: { grid: { display: false } } } }
+            });
+        }
+
+        function changeChartType(type) { initMainChart(type); }
+
+        function toggleDarkMode() {
+            document.documentElement.classList.toggle('dark');
+            document.getElementById('mode-icon').className = document.documentElement.classList.contains('dark') ? 'fa-solid fa-sun' : 'fa-solid fa-moon';
+        }
+
+        function processLogout() {
+            Swal.fire({ title: 'LOGOUT?', icon: 'warning', showCancelButton: true, confirmButtonText: 'Yes' }).then(r => { if(r.isConfirmed) location.href='index.html'; });
+        }
+
+        window.onload = () => {
+    // Kiểm tra quyền truy cập Admin
+    const user = JSON.parse(localStorage.getItem('currentUser'));
+    if (!user || user.role !== 'Admin') {
+        alert("Bạn không có quyền truy cập khu vực này!");
+        location.href = 'staff-dashboard.html'; 
+        return;
+    }
+
+    // Các logic load trang cũ của bạn
+    setLang(localStorage.getItem('hub_lang') || 'VN');
+    initMainChart('bar');
+    // ... (giữ nguyên phần Chart cũ)
+};
+    
+    // Lắng nghe tín hiệu từ trang Menu (Real-time Sync)
+window.addEventListener('storage', (e) => {
+    if (e.key === 'menu_update_timestamp') {
+        console.log("Phát hiện thay đổi thực đơn! Đang cập nhật biểu đồ...");
+        
+        // 1. Hiển thị một thông báo nhỏ (Toast) cho Admin biết
+        const Toast = Swal.mixin({ toast: true, position: 'top-end', showConfirmButton: false, timer: 2000 });
+        Toast.fire({ icon: 'info', title: 'Thực đơn vừa được cập nhật!' });
+
+        // 2. Tự động nhảy số Doanh thu (Giả lập cập nhật theo giá mới)
+        updateDashboardNumbers();
+        
+        // 3. Vẽ lại biểu đồ "Món chạy nhất"
+        initBestSellerChart(); 
+    }
+});
+
+function updateDashboardNumbers() {
+    // Nhảy số tưng tưng cho xịn
+    const revDay = document.getElementById('txt-rev-day').nextElementSibling;
+    revDay.innerText = "12.550.000đ"; // Tăng nhẹ do Admin vừa đổi giá
+    revDay.classList.add('animate-bounce', 'text-green-600');
+    setTimeout(() => revDay.classList.remove('animate-bounce'), 1000);
+}
+    </script>
+</body>
+</html>
