@@ -59,7 +59,7 @@ cd NHAPMON_CNPM_NHOM-11_QLHT_QUANCAFE/
 ### Bước 3: Cài đặt thư viện cần thiết
 pip install flask
 ### Bước 4: Chạy ứng dụng
-python main.
+python main.py
 ### Bước 5: Truy cập hệ thống
 Mở trình duyệt và truy cập:
 http://localhost:8000/index.html
