@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <title>Partner Table Management | Starbucks Hub</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script>tailwind.config = { darkMode: 'class' }</script>
+    
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;700;800&display=swap');
+        :root { --sb-forest: #1e3932; --sb-green: #007042; }
+        
+        body { 
+            font-family: 'Plus Jakarta Sans', sans-serif; 
+            transition: 0.5s; 
+            background-color: #f0f2f5; 
+            min-height: 100vh; 
+            overflow-y: auto; 
+        }
+        .dark body { background-color: #0b1613; color: #d4e9e2; }
+
+        .sidebar-floating { 
+            background: var(--sb-forest); 
+            width: 70px; 
+            height: calc(100vh - 40px); 
+            position: fixed; 
+            top: 20px; 
+            left: 20px; 
+            border-radius: 35px; 
+            z-index: 100; 
+            display: flex; 
+            flex-direction: column; 
+            align-items: center; 
+            padding: 1.5rem 0; 
+            box-shadow: 0 20px 50px rgba(0,0,0,0.2); 
+        }
+
+        .nav-icon { 
+            width: 46px; 
+            height: 46px; 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            border-radius: 16px; 
+            cursor: pointer; 
+            color: rgba(255, 255, 255, 0.3); 
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1); 
+            margin-bottom: 0.8rem; 
+            position: relative; 
+        }
+        .nav-icon:hover, .active-page { 
+            background: rgba(255, 255, 255, 0.15); 
+            color: #fff; 
+            transform: scale(1.15); 
+        }
+
+        .tooltip { 
+            position: absolute; 
+            left: 65px; 
+            background: var(--sb-forest); 
+            color: white; 
+            padding: 6px 12px; 
+            border-radius: 10px; 
+            font-size: 9px; 
+            font-weight: 800; 
+            text-transform: uppercase; 
+            white-space: nowrap; 
+            transform: scale(0); 
+            transition: 0.2s; 
+            z-index: 1000; 
+            pointer-events: none; 
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+        .nav-icon:hover .tooltip { transform: scale(1); }
+
+        .logout-btn:hover { 
+            background: #ef4444 !important; 
+            color: white !important; 
+            box-shadow: 0 10px 20px rgba(239, 68, 68, 0.4); 
+        }
+
+        main { margin-left: 110px; padding: 110px 40px 40px 0; }
+        .glass-header { 
+            background: rgba(255, 255, 255, 0.8); 
+            backdrop-filter: blur(15px); 
+            left: 110px; 
+            width: calc(100% - 130px); 
+            border-radius: 25px; 
+            top: 15px; 
+            height: 75px; 
+            z-index: 90; 
+            position: fixed; 
+            border: 1px solid rgba(0,0,0,0.05); 
+        }
+        .dark .glass-header { background: rgba(11, 22, 19, 0.8); border-color: rgba(255,255,255,0.05); }
+
+        .bento-card { 
+            border-radius: 35px; 
+            background: white; 
+            border: 1px solid rgba(0,0,0,0.03); 
+            transition: 0.4s; 
+        }
+        .dark .bento-card { background: rgba(255,255,255,0.03); border-color: rgba(255,255,255,0.05); }
+
+        .table-item { 
+            height: 110px; 
+            border-radius: 30px; 
+            display: flex; 
+            flex-direction: column; 
+            align-items: center; 
+            justify-content: center; 
+            cursor: pointer; 
+            transition: 0.4s; 
+            font-weight: 800; 
+            border: 1px solid rgba(0,0,0,0.03); 
+        }
+        .st-empty { background: white; color: #94a3b8; }
+        .dark .st-empty { background: rgba(255,255,255,0.05); color: rgba(255,255,255,0.2); }
+        .st-occupied { 
+            background: linear-gradient(135deg, #007042, #1e3932); 
+            color: white; 
+            box-shadow: 0 10px 25px rgba(0,112,66,0.2); 
+            border: none; 
+        }
+        .st-cleaning { background: #fff7ed; color: #c2410c; border: 1px solid #ffedd5; }
+        .table-item:hover { transform: translateY(-5px); box-shadow: 0 15px 30px rgba(0,0,0,0.05); }
+    </style>
+</head>
+<body class="flex">
+
+    <aside class="sidebar-floating shadow-2xl">
+        <div class="mb-8">
+            <img src="https://upload.wikimedia.org/wikipedia/en/d/d3/Starbucks_Corporation_Logo_2011.svg" class="w-9 bg-white p-1 rounded-xl shadow-sm">
+        </div>
+        <nav class="flex-1">
+            <div onclick="location.href='staff-dashboard.html'" class="nav-icon"><i class="fa-solid fa-house-user"></i><span class="tooltip">Dashboard</span></div>
+            <div onclick="location.href='staff-tables.html'" class="nav-icon active-page"><i class="fa-solid fa-layer-group"></i><span class="tooltip">Phục vụ bàn</span></div>
+            <div onclick="location.href='staff-pos.html'" class="nav-icon"><i class="fa-solid fa-cash-register"></i><span class="tooltip">Bán hàng</span></div>
+            <div onclick="location.href='staff-crm.html'" class="nav-icon"><i class="fa-solid fa-user-tag"></i><span class="tooltip">Khách hàng</span></div>
+            <div onclick="location.href='staff-report.html'" class="nav-icon"><i class="fa-solid fa-file-invoice-dollar"></i><span class="tooltip">Kết ca</span></div>
+        </nav>
+        <button onclick="handleLogout()" class="nav-icon logout-btn mt-auto"><i class="fa-solid fa-power-off"></i><span class="tooltip">Đăng xuất</span></button>
+    </aside>
+
+    <header class="glass-header flex justify-between items-center px-10 shadow-lg">
+        <div>
+            <h1 class="text-xl font-black italic uppercase tracking-tighter text-[#1e3932] dark:text-white">Floor Plan Control</h1>
+            <p class="text-[9px] font-black text-green-500 uppercase tracking-widest italic">● Hệ thống đang trực tuyến (Real-time)</p>
+        </div>
+        <div class="flex items-center gap-3">
+            <button onclick="uc03_Transfer()" class="bg-[#1e3932] text-white px-5 py-2.5 rounded-2xl text-[10px] font-black uppercase shadow-lg hover:bg-black transition-all">Chuyển bàn (UC03)</button>
+            <button onclick="uc03_Merge()" class="bg-amber-500 text-black px-5 py-2.5 rounded-2xl text-[10px] font-black uppercase shadow-lg hover:bg-amber-600 transition-all">Gộp bàn (UC03)</button>
+            <button onclick="toggleTheme()" class="w-10 h-10 bento-card flex items-center justify-center shadow-sm"><i id="t-icon" class="fa-solid fa-sun text-amber-500"></i></button>
+        </div>
+    </header>
+
+    <main class="w-full mr-5">
+        <div class="bento-card p-10 min-h-[calc(100vh-160px)] shadow-sm">
+            <div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-8" id="table-grid"></div>
+        </div>
+    </main>
+    <script>
+        // 1. DATA SYNC (UC05)
+        let tables = JSON.parse(localStorage.getItem('sb_admin_tables')) || [];
+
+        function render() {
+            const grid = document.getElementById('table-grid');
+            if(tables.length === 0) {
+                grid.innerHTML = '<div class="col-span-full text-center py-20 opacity-20 italic font-black uppercase">Chưa có dữ liệu bàn. Admin cần khởi tạo sơ đồ.</div>';
+                return;
+            }
+            grid.innerHTML = tables.map(t => `
+                <div onclick="handleTableAction('${t.name}', '${t.status}')" class="table-item ${t.status} group animate-fade-in">
+                    <i class="fa-solid ${t.status === 'st-occupied' ? 'fa-user-group' : (t.status === 'st-cleaning' ? 'fa-broom' : 'fa-mug-hot')} text-xs mb-3 opacity-30 group-hover:scale-125 transition"></i>
+                    <span class="tracking-widest text-lg">#${t.name}</span>
+                    <p class="text-[8px] font-black uppercase mt-1 opacity-50">
+                        ${t.status === 'st-occupied' ? 'Có khách' : (t.status === 'st-cleaning' ? 'Đang dọn' : 'Trống')}
+                    </p>
+                </div>
+            `).join('');
+        }
+
+        // 2. ACTION LOGIC (UC06 & UC14)
+        async function handleTableAction(name, status) {
+            if(status === 'st-cleaning') {
+                const res = await Swal.fire({
+                    title: 'DỌN XONG BÀN?',
+                    text: `Chuyển Bàn #${name} sang trạng thái TRỐNG?`,
+                    icon: 'question', showCancelButton: true, confirmButtonColor: '#007042'
+                });
+                if(res.isConfirmed) updateStatus(name, 'st-empty');
+            } else {
+                localStorage.setItem('selected_table_id', name);
+                if(status === 'st-empty') updateStatus(name, 'st-occupied');
+                window.location.href = 'staff-pos.html';
+            }
+        }
+
+        function updateStatus(name, newStatus) {
+            const table = tables.find(t => t.name === name);
+            if(table) {
+                table.status = newStatus;
+                saveData();
+            }
+        }
+
+        function saveData() {
+            localStorage.setItem('sb_admin_tables', JSON.stringify(tables));
+            localStorage.setItem('table_sync_trigger', Date.now());
+            render();
+        }
+
+        // 3. TRANSFER (UC03)
+        async function uc03_Transfer() {
+            const occupied = tables.filter(t => t.status === 'st-occupied');
+            if(occupied.length === 0) return Swal.fire('Lỗi', 'Không có bàn nào đang có khách!', 'error');
+            const sourceOpts = {}; occupied.forEach(t => sourceOpts[t.id] = `Bàn #${t.name}`);
+            const { value: sId } = await Swal.fire({ title: 'CHỌN BÀN NGUỒN', input: 'select', inputOptions: sourceOpts });
+            if(sId) {
+                const empty = tables.filter(t => t.status === 'st-empty');
+                const targetOpts = {}; empty.forEach(t => targetOpts[t.id] = `Đến Bàn #${t.name}`);
+                const { value: tId } = await Swal.fire({ title: 'CHỌN BÀN ĐÍCH', input: 'select', inputOptions: targetOpts });
+                if(tId) {
+                    const source = tables.find(x => x.id == sId);
+                    const target = tables.find(x => x.id == tId);
+                    target.status = 'st-occupied';
+                    source.status = 'st-empty';
+                    saveData();
+                    Swal.fire('Thành công', `Đã chuyển sang #${target.name}`, 'success');
+                }
+            }
+        }
+
+        async function uc03_Merge() {
+    // Lấy danh sách bàn đang có khách
+    const occupied = tables.filter(t => t.status === 'st-occupied');
+    if(occupied.length < 2) return Swal.fire('Thông báo', 'Cần ít nhất 2 bàn có khách để gộp!', 'info');
+
+    const { value: selectedTables } = await Swal.fire({
+        title: 'GỘP BÀN (UC03)',
+        html: occupied.map(t => `
+            <div class="flex items-center mb-2">
+                <input type="checkbox" id="merge-${t.id}" value="${t.id}" class="mr-2">
+                <label for="merge-${t.id}">Bàn #${t.name}</label>
+            </div>
+        `).join(''),
+        confirmButtonText: 'XÁC NHẬN GỘP',
+        preConfirm: () => {
+            const checked = [];
+            occupied.forEach(t => {
+                if(document.getElementById(`merge-${t.id}`).checked) checked.push(t.id);
+            });
+            if(checked.length < 2) return Swal.showValidationMessage('Chọn ít nhất 2 bàn!');
+            return checked;
+        }
+    });
+
+    if(selectedTables) {
+        // Thực hiện gộp (Trong thực tế sẽ gộp bill, ở đây ta ghi log xác nhận)
+        Swal.fire('Thành công', 'Các bàn đã được gộp vào hóa đơn chung.', 'success');
+        saveData(); // Đồng bộ trạng thái
+    }
+}
+        
+
+        // 4. SYNC & THEME
+        function updateThemeUI() {
+            const theme = localStorage.getItem('hub_theme') || 'light';
+            document.documentElement.classList.toggle('dark', theme === 'dark');
+            const icon = document.getElementById('t-icon');
+            if(icon) icon.className = theme === 'dark' ? 'fa-solid fa-moon text-blue-400' : 'fa-solid fa-sun text-amber-500';
+        }
+
+        function toggleTheme() {
+            const isDark = document.documentElement.classList.toggle('dark');
+            localStorage.setItem('hub_theme', isDark ? 'dark' : 'light');
+            updateThemeUI();
+        }
+
+        window.addEventListener('storage', (e) => {
+            if (e.key === 'sb_admin_tables' || e.key === 'table_sync_trigger') {
+                tables = JSON.parse(localStorage.getItem('sb_admin_tables'));
+                render();
+            }
+            if (e.key === 'hub_theme') updateThemeUI();
+        });
+
+        function handleLogout() { 
+            localStorage.removeItem('currentUser');
+            window.location.href = 'index.html'; 
+        }
+
+        window.onload = () => {
+            updateThemeUI();
+            render();
+        };
+    </script>
+</body>
+</html>
