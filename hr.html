@@ -180,17 +180,6 @@
         }
     }
 
-    function uc34_DeleteStaff(id) {
-        Swal.fire({
-            title: 'Xóa nhân sự?',
-            text: "Dữ liệu này sẽ không thể khôi phục!",
-            icon: 'warning',
-            showCancelButton: true,
-            confirmButtonColor: '#ef4444',
-            confirmButtonText: 'XÓA NGAY'
-        }).then(res => { if(res.isConfirmed) { staffList = staffList.filter(x => x.id !== id); render(); }});
-    }
-
     function uc39_ToggleLock(id) {
         const user = staffList.find(x => x.id === id);
         user.status = user.status === 'Active' ? 'Locked' : 'Active';
@@ -209,6 +198,34 @@
         if (theme === 'dark') document.documentElement.classList.add('dark');
         else document.documentElement.classList.remove('dark');
     }
+
+    // Cập nhật UC34: Kiểm tra trạng thái trước khi xóa
+function uc34_DeleteStaff(id) {
+    const user = staffList.find(x => x.id === id);
+    if (user.status === 'Active') {
+        return Swal.fire('LỖI (AC34)', 'Không thể xóa nhân viên đang ở trạng thái Active. Hãy khóa tài khoản trước!', 'error');
+    }
+
+    Swal.fire({
+        title: 'Xác nhận xóa?',
+        icon: 'warning',
+        showCancelButton: true
+    }).then(res => {
+        if(res.isConfirmed) {
+            staffList = staffList.filter(x => x.id !== id);
+            // GHI LOG (UC34 Task)
+            syncLogToHR(`Admin đã xóa hồ sơ nhân sự: ${user.name}`);
+            render();
+        }
+    });
+}
+
+// Hàm ghi log tập trung
+function syncLogToHR(msg) {
+    let logs = JSON.parse(localStorage.getItem('sb_logs')) || [];
+    logs.push({ time: new Date().toLocaleTimeString(), partner: "Executive Admin", action: msg });
+    localStorage.setItem('sb_logs', JSON.stringify(logs));
+}
 
     window.onload = () => {
         updateTheme();
