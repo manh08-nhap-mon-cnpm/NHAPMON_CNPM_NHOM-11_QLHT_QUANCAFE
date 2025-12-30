@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <title>Starbucks Admin | Menu & Recipe Hub</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script>tailwind.config = { darkMode: 'class' }</script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;700;800&display=swap');
+        :root { --sb-forest: #1e3932; --sb-green: #007042; }
+        body { font-family: 'Plus Jakarta Sans', sans-serif; background-color: #f0f2f5; transition: 0.5s; }
+        .dark body { background-color: #0b1613; color: #d4e9e2; }
+
+        /* Sidebar & Tooltip chuẩn Admin */
+        .sidebar-floating { background: var(--sb-forest); width: 70px; height: calc(100vh - 40px); position: fixed; top: 20px; left: 20px; border-radius: 35px; z-index: 100; display: flex; flex-direction: column; align-items: center; padding: 1.5rem 0; box-shadow: 0 20px 50px rgba(0,0,0,0.2); }
+        .nav-icon { width: 46px; height: 46px; display: flex; align-items: center; justify-content: center; border-radius: 16px; cursor: pointer; color: rgba(255, 255, 255, 0.3); transition: 0.3s; margin-bottom: 0.8rem; position: relative; }
+        .nav-icon:hover, .active-page { background: rgba(255, 255, 255, 0.15); color: #fff; transform: scale(1.1); }
+        .tooltip { position: absolute; left: 65px; background: var(--sb-forest); color: white; padding: 6px 12px; border-radius: 10px; font-size: 9px; font-weight: 800; text-transform: uppercase; white-space: nowrap; transform: scale(0); transition: 0.2s; z-index: 1000; pointer-events: none; }
+        .nav-icon:hover .tooltip { transform: scale(1); }
+
+        main { margin-left: 110px !important; padding: 110px 40px 40px 0 !important; }
+        .glass-header { background: rgba(240, 242, 245, 0.8); backdrop-filter: blur(15px); left: 110px; width: calc(100% - 130px); border-radius: 25px; top: 15px; height: 75px; z-index: 90; position: fixed; }
+        .dark .glass-header { background: rgba(11, 22, 19, 0.8); border-color: rgba(255,255,255,0.05); }
+        
+        .bento-card { border-radius: 35px; background: white; border: 1px solid rgba(0,0,0,0.02); overflow: hidden; transition: 0.4s; }
+        .dark .bento-card { background: #162621; border-color: rgba(255,255,255,0.05); }
+        .txt-black { font-weight: 800; font-style: italic; text-transform: uppercase; }
+        .thumb-img { width: 45px; height: 45px; object-fit: cover; border-radius: 12px; }
+    </style>
+</head>
+<body class="flex">
+
+    <aside class="sidebar-floating shadow-2xl">
+    <div class="mb-8">
+        <img src="https://upload.wikimedia.org/wikipedia/en/d/d3/Starbucks_Corporation_Logo_2011.svg" class="w-9 bg-white p-1 rounded-xl shadow-sm">
+    </div>
+    <nav class="flex-1">
+        <div onclick="location.href='admin-dashboard.html'" class="nav-icon" id="nav-dash">
+            <i class="fa-solid fa-chart-pie"></i>
+            <span class="tooltip">Báo cáo</span>
+        </div>
+        <div onclick="location.href='admin-tables.html'" class="nav-icon" id="nav-tables">
+            <i class="fa-solid fa-layer-group"></i>
+            <span class="tooltip">Sơ đồ bàn</span>
+        </div>
+        <div onclick="location.href='admin-menu.html'" class="nav-icon" id="nav-menu">
+            <i class="fa-solid fa-mug-hot"></i>
+            <span class="tooltip">Thực đơn</span>
+        </div>
+        <div onclick="location.href='inventory.html'" class="nav-icon" id="nav-inv">
+            <i class="fa-solid fa-boxes-stacked"></i>
+            <span class="tooltip">Kho hàng</span>
+        </div>
+        <div onclick="location.href='hr.html'" class="nav-icon" id="nav-hr">
+            <i class="fa-solid fa-user-shield"></i>
+            <span class="tooltip">Nhân sự</span>
+        </div>
+        <div onclick="location.href='admin-settings.html'" class="nav-icon" id="nav-set">
+            <i class="fa-solid fa-gears"></i>
+            <span class="tooltip">Cài đặt</span>
+        </div>
+    </nav>
+    <button onclick="handleLogout()" class="nav-icon logout-btn mt-auto">
+        <i class="fa-solid fa-power-off"></i>
+        <span class="tooltip">Đăng xuất</span>
+    </button>
+</aside>
+<header class="glass-header flex justify-between items-center px-10 shadow-lg">
+        <div>
+            <p class="text-[9px] font-black tracking-[0.4em] text-gray-400 uppercase italic">Product Hub</p>
+            <h1 class="text-xl txt-black text-[#1e3932] dark:text-white">Quản Lý Thực Đơn (UC13)</h1>
+        </div>
+        <div class="flex items-center gap-3">
+            <div class="flex bg-gray-100 dark:bg-white/5 p-1 rounded-2xl gap-1">
+                <button onclick="uc07_AddCategory()" class="p-2 text-[10px] font-black uppercase hover:text-green-600" title="Thêm danh mục"><i class="fa-solid fa-folder-plus"></i></button>
+                <button onclick="uc08_EditCategory()" class="p-2 text-[10px] font-black uppercase hover:text-blue-500" title="Sửa danh mục"><i class="fa-solid fa-folder-tree"></i></button>
+                <button onclick="uc09_DeleteCategory()" class="p-2 text-[10px] font-black uppercase hover:text-red-500" title="Xóa danh mục"><i class="fa-solid fa-folder-minus"></i></button>
+            </div>
+            <button onclick="uc10_AddProduct()" class="bg-[#007042] text-white px-6 py-2.5 rounded-2xl text-[10px] font-black uppercase shadow-lg hover:bg-green-800 transition-all">+ Thêm món (UC10)</button>
+            <button onclick="toggleDarkMode()" class="w-10 h-10 bento-card flex items-center justify-center shadow-sm"><i id="mode-icon" class="fa-solid fa-moon"></i></button>
+        </div>
+    </header>
+
+    <main class="flex-1 grid grid-cols-12 gap-6 mr-5">
+        <div class="col-span-12 lg:col-span-9">
+            <div class="bento-card p-8 shadow-sm">
+                <div class="flex justify-between items-center mb-8">
+                    <h3 id="menu-count" class="txt-black text-sm text-[#1e3932] dark:text-white">Danh Sách Món Ăn</h3>
+                    <input type="text" id="searchMenu" onkeyup="filterMenu()" placeholder="Tìm món nhanh..." class="bg-gray-100 dark:bg-white/5 border-none px-6 py-2 rounded-xl text-[10px] font-bold w-48">
+                </div>
+                <div class="max-h-[600px] overflow-y-auto pr-2">
+                    <table class="w-full text-left text-[11px]">
+                        <thead class="sticky top-0 bg-white dark:bg-[#162621] z-10 shadow-sm">
+                            <tr class="text-gray-400 uppercase tracking-widest border-b border-gray-100 dark:border-white/5">
+                                <th class="pb-4 pl-4 w-16">Ảnh</th>
+                                <th class="pb-4">Sản Phẩm</th>
+                                <th class="pb-4">Loại</th>
+                                <th class="pb-4 text-right pr-10">Giá VNĐ</th>
+                                <th class="pb-4 text-center">Action (UC11/12/24/25)</th>
+                            </tr>
+                        </thead>
+                        <tbody id="menu-tbody" class="font-bold text-[#1e3932] dark:text-gray-300"></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-span-12 lg:col-span-3">
+            <div class="bento-card p-6 bg-[#1e3932] text-white shadow-xl">
+                <h4 class="text-[9px] font-black uppercase mb-4 text-green-400 italic">Menu Activity Logs</h4>
+                <div id="menu-logs" class="space-y-3 max-h-[500px] overflow-y-auto text-[9px] font-bold scrollbar-hide"></div>
+            </div>
+        </div>
+    </main>
+
+   <script>
+    // --- 1. DỮ LIỆU GỐC ---
+    let currentMenu = JSON.parse(localStorage.getItem('sb_full_menu')) || [];
+
+    // HÀM LƯU VÀ VẼ GIAO DIỆN
+    function saveAndRender(data = currentMenu) {
+        localStorage.setItem('sb_full_menu', JSON.stringify(currentMenu));
+        document.getElementById('menu-count').innerText = `Danh Sách Món Ăn (${data.length} Món)`;
+        const tbody = document.getElementById('menu-tbody');
+        tbody.innerHTML = data.map(p => `
+            <tr class="border-b border-gray-50 dark:border-white/5 hover:bg-gray-50 dark:hover:bg-white/5 transition">
+                <td class="py-4 pl-4"><img src="${p.img}" class="thumb-img shadow-sm"></td>
+                <td class="py-4 uppercase text-[10px] tracking-tighter">${p.name}</td>
+                <td><span class="px-2 py-1 bg-gray-100 dark:bg-white/10 rounded-lg text-[8px] uppercase">${p.cat}</span></td>
+                <td class="text-right pr-10 italic font-black text-[#cba258]">${p.price.toLocaleString()}đ</td>
+                <td class="text-center">
+                    <div class="flex justify-center gap-2">
+                        <button onclick="uc25_ManageToppings(${p.id})" class="p-2 text-amber-500 hover:scale-110 transition" title="Topping"><i class="fa-solid fa-cookie-bite"></i></button>
+                        <button onclick="uc24_OpenRecipeEditor(${p.id})" class="p-2 text-green-600 hover:scale-110 transition" title="Công thức"><i class="fa-solid fa-mortar-pestle"></i></button>
+                        <button onclick="editPrice(${p.id})" class="p-2 text-blue-500 hover:scale-110 transition"><i class="fa-solid fa-pen-to-square"></i></button>
+                        <button onclick="deleteProd(${p.id})" class="p-2 text-red-400 hover:scale-110 transition"><i class="fa-solid fa-trash-can"></i></button>
+                    </div>
+                </td>
+            </tr>`).join('');
+    }
+
+    // --- 2. QUẢN LÝ DANH MỤC (UC07, 08, 09) ---
+    // Tao đã thêm các danh mục mặc định: Frappuccino, Bakery, Cold Brew, Dessert
+    function getCategories() {
+        return JSON.parse(localStorage.getItem('sb_categories')) || ["Espresso", "Frappuccino", "Teavana", "Cold Brew", "Bakery", "Dessert"];
+    }
+
+    async function uc07_AddCategory() {
+        let categories = getCategories();
+        const { value: newCat } = await Swal.fire({
+            title: 'THÊM DANH MỤC MỚI (UC07)',
+            input: 'text',
+            inputPlaceholder: 'Nhập tên danh mục...',
+            preConfirm: (v) => { if (!v || categories.includes(v)) return Swal.showValidationMessage('Tên trống hoặc đã tồn tại!'); return v; }
+        });
+        if (newCat) {
+            categories.push(newCat);
+            localStorage.setItem('sb_categories', JSON.stringify(categories));
+            pushLog(`Admin thêm danh mục: ${newCat}`);
+            Swal.fire('Thành công', '', 'success');
+        }
+    }
+
+    async function uc08_EditCategory() {
+        let categories = getCategories();
+        const { value: selectedCat } = await Swal.fire({
+            title: 'SỬA DANH MỤC (UC08)',
+            input: 'select',
+            inputOptions: categories.reduce((obj, cat) => ({...obj, [cat]: cat}), {}),
+            showCancelButton: true
+        });
+        if (selectedCat) {
+            const { value: newName } = await Swal.fire({
+                title: 'TÊN MỚI CHO ' + selectedCat,
+                input: 'text',
+                preConfirm: (v) => { if(!v || categories.includes(v)) return Swal.showValidationMessage('Tên không hợp lệ!'); return v; }
+            });
+            if (newName) {
+                const idx = categories.indexOf(selectedCat);
+                categories[idx] = newName;
+                currentMenu.forEach(p => { if(p.cat === selectedCat) p.cat = newName; });
+                localStorage.setItem('sb_categories', JSON.stringify(categories));
+                saveAndRender();
+                pushLog(`Sửa danh mục: ${selectedCat} -> ${newName}`);
+            }
+        }
+    }
+
+    async function uc09_DeleteCategory() {
+        let categories = getCategories();
+        const { value: selectedCat } = await Swal.fire({
+            title: 'XÓA DANH MỤC (UC09)',
+            input: 'select',
+            inputOptions: categories.reduce((obj, cat) => ({...obj, [cat]: cat}), {}),
+            showCancelButton: true
+        });
+        if (selectedCat) {
+            if (currentMenu.some(p => p.cat === selectedCat)) return Swal.fire('Lỗi', 'Danh mục đang có món, không thể xóa!', 'error');
+            const res = await Swal.fire({ title: 'Xác nhận xóa ' + selectedCat + '?', icon: 'warning', showCancelButton: true });
+            if (res.isConfirmed) {
+                const newCats = categories.filter(c => c !== selectedCat);
+                localStorage.setItem('sb_categories', JSON.stringify(newCats));
+                pushLog(`Xóa danh mục: ${selectedCat}`);
+                Swal.fire('Đã xóa', '', 'success');
+            }
+        }
+    }
+
+    // --- 3. QUẢN LÝ MÓN ĂN & CÔNG THỨC (UC10, 24, 25) ---
+    async function uc10_AddProduct() {
+        let categories = getCategories();
+        const { value: f } = await Swal.fire({
+            title: 'THÊM MÓN MỚI (UC10)',
+            html: `
+                <input id="p-name" class="swal2-input" placeholder="Tên món">
+                <input id="p-price" type="number" class="swal2-input" placeholder="Giá bán">
+                <select id="p-cat" class="swal2-input">
+                    ${categories.map(c => `<option value="${c}">${c}</option>`).join('')}
+                </select>
+            `,
+            preConfirm: () => {
+                const name = document.getElementById('p-name').value;
+                const price = parseInt(document.getElementById('p-price').value);
+                if (!name || price <= 0) return Swal.showValidationMessage('Vui lòng nhập đủ!');
+                return { name, price, cat: document.getElementById('p-cat').value };
+            }
+        });
+        if (f) {
+            currentMenu.push({ id: Date.now(), ...f, img: "https://www.starbucks.com/static/images/global/placeholder.gif", recipe: [], toppings: [] });
+            saveAndRender();
+            pushLog(`Admin thêm món: ${f.name}`);
+            localStorage.setItem('menu_update_timestamp', Date.now()); 
+        }
+    }
+
+    async function uc24_OpenRecipeEditor(productId) {
+        const product = currentMenu.find(p => p.id === productId);
+        const inventory = JSON.parse(localStorage.getItem('starbucks_inv')) || [];
+        if (inventory.length === 0) return Swal.fire('Lỗi', 'Kho chưa có nguyên liệu!', 'error');
+        const { value: formValues } = await Swal.fire({
+            title: 'THIẾT LẬP CÔNG THỨC (UC24)',
+            html: `<select id="sw-ing" class="swal2-input">${inventory.map(i => `<option value="${i.id}">${i.name} (${i.unit})</option>`).join('')}</select><input id="sw-qty" type="number" class="swal2-input" placeholder="Định mức">`,
+            preConfirm: () => ({ id: document.getElementById('sw-ing').value, qty: parseFloat(document.getElementById('sw-qty').value) })
+        });
+        if (formValues && formValues.qty > 0) {
+            if (!product.recipe) product.recipe = [];
+            const exist = product.recipe.find(r => r.id === formValues.id);
+            if (exist) exist.qty = formValues.qty; else product.recipe.push(formValues);
+            saveAndRender();
+            pushLog(`Cập nhật công thức: ${product.name}`);
+            localStorage.setItem('menu_update_timestamp', Date.now());
+        }
+    }
+
+    async function uc25_ManageToppings(productId) {
+        const product = currentMenu.find(p => p.id === productId);
+        const inventory = JSON.parse(localStorage.getItem('starbucks_inv')) || [];
+        const { value: topping } = await Swal.fire({
+            title: 'GÁN TOPPING (UC25)',
+            html: `<input id="t-name" class="swal2-input" placeholder="Tên Topping"><select id="t-ing" class="swal2-input">${inventory.map(i => `<option value="${i.id}">${i.name}</option>`).join('')}</select><input id="t-qty" type="number" class="swal2-input" placeholder="Định mức"><input id="t-price" type="number" class="swal2-input" placeholder="Giá cộng thêm">`,
+            preConfirm: () => ({ name: document.getElementById('t-name').value, ingId: document.getElementById('t-ing').value, qty: parseFloat(document.getElementById('t-qty').value), price: parseInt(document.getElementById('t-price').value) })
+        });
+        if (topping && topping.name) {
+            if (!product.toppings) product.toppings = [];
+            product.toppings.push(topping);
+            saveAndRender();
+            pushLog(`Gán Topping cho ${product.name}: ${topping.name}`);
+            localStorage.setItem('menu_update_timestamp', Date.now());
+        }
+    }
+
+    // --- 4. TIỆN ÍCH HỆ THỐNG ---
+    async function editPrice(id) {
+        const p = currentMenu.find(i => i.id === id);
+        const { value: np } = await Swal.fire({ title: 'Cập nhật giá', input: 'number', inputValue: p.price });
+        if (np > 0) { p.price = parseInt(np); saveAndRender(); pushLog(`Sửa giá ${p.name} -> ${np}đ`); }
+    }
+
+    function deleteProd(id) {
+        Swal.fire({ title: 'Xóa món?', icon: 'warning', showCancelButton: true }).then(r => {
+            if (r.isConfirmed) {
+                const p = currentMenu.find(i => i.id === id);
+                currentMenu = currentMenu.filter(i => i.id !== id);
+                pushLog(`Xóa món: ${p.name}`);
+                saveAndRender();
+            }
+        });
+    }
+
+    function pushLog(msg) {
+        const logs = document.getElementById('menu-logs');
+        logs.innerHTML = `<p class="border-l-2 border-green-500 pl-2 mb-2"><span class="text-white/40">[${new Date().toLocaleTimeString()}]</span> ${msg}</p>` + logs.innerHTML;
+    }
+
+    function filterMenu() {
+        const val = document.getElementById('searchMenu').value.toLowerCase();
+        saveAndRender(currentMenu.filter(p => p.name.toLowerCase().includes(val)));
+    }
+
+    function toggleDarkMode() {
+        const isDark = document.documentElement.classList.toggle('dark');
+        localStorage.setItem('hub_theme', isDark ? 'dark' : 'light');
+        document.getElementById('mode-icon').className = isDark ? 'fa-solid fa-sun' : 'fa-solid fa-moon';
+    }
+
+    function handleLogout() { localStorage.removeItem('currentUser'); location.href = 'index.html'; }
+
+    window.onload = () => {
+        const theme = localStorage.getItem('hub_theme') || 'light';
+        if (theme === 'dark') document.documentElement.classList.add('dark');
+        const user = JSON.parse(localStorage.getItem('currentUser'));
+        if (!user || user.role !== 'Admin') { location.href = 'index.html'; return; }
+        saveAndRender();
+    };
+</script>

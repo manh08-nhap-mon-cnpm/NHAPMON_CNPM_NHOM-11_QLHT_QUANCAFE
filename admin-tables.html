@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <title>Starbucks Global Executive | Floor Management</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>tailwind.config = { darkMode: 'class' }</script>
+    
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;700;800&display=swap');
+        :root { --sb-forest: #1e3932; --sb-green: #007042; }
+        body { font-family: 'Plus Jakarta Sans', sans-serif; letter-spacing: -0.02em; transition: all 0.5s ease; background-color: #f0f2f5; }
+
+        /* Sidebar & Header - Copy nguyên bản từ Dashboard */
+        .sidebar-floating { background: #1e3932; width: 70px; height: calc(100vh - 40px); position: fixed; top: 20px; left: 20px; border-radius: 35px; z-index: 100; display: flex; flex-direction: column; align-items: center; padding: 1.5rem 0; box-shadow: 0 20px 50px rgba(0,0,0,0.2); }
+        .nav-icon { width: 46px; height: 46px; display: flex; align-items: center; justify-content: center; border-radius: 16px; cursor: pointer; color: rgba(255, 255, 255, 0.3); transition: 0.3s; margin-bottom: 0.8rem; position: relative; }
+        .nav-icon:hover, .active-page { background: rgba(255, 255, 255, 0.15); color: #fff; transform: scale(1.1); }
+        .tooltip { position: absolute; left: 65px; background: #1e3932; color: white; padding: 6px 12px; border-radius: 10px; font-size: 9px; font-weight: 800; text-transform: uppercase; white-space: nowrap; transform: scale(0); transition: 0.2s; z-index: 1000; }
+        .nav-icon:hover .tooltip { transform: scale(1); }
+
+        /* Layout */
+        main { margin-left: 110px !important; padding: 110px 40px 40px 0 !important; }
+        .glass-header { background: rgba(240, 242, 245, 0.8); backdrop-filter: blur(15px); left: 110px; width: calc(100% - 130px); border-radius: 25px; top: 15px; height: 75px; z-index: 90; }
+
+        /* Bento Cards */
+        .bento-card { border-radius: 30px; background: white; border: 1px solid rgba(0,0,0,0.02); transition: 0.4s; overflow: hidden; }
+        .bento-card:hover { transform: translateY(-5px); box-shadow: 0 20px 40px rgba(0,0,0,0.05); }
+        .dark body { background-color: #0b1613; color: #d4e9e2; }
+        .dark .bento-card { background: #162621; border: 1px solid rgba(255,255,255,0.05); }
+        
+        .txt-black { font-weight: 800; font-style: italic; text-transform: uppercase; letter-spacing: -0.05em; }
+
+        /* Table Items - Giữ nguyên logic phần chính */
+        .admin-table-item {
+            width: 75px; height: 75px; border-radius: 22px; display: flex; flex-direction: column; align-items: center; justify-content: center;
+            transition: 0.4s; cursor: pointer; border: 1px solid rgba(0,0,0,0.05); font-weight: 800; background: white;
+        }
+        .dark .admin-table-item { background: #162621; border: 1px solid rgba(255,255,255,0.05); }
+        .st-empty { color: #94a3b8; }
+        .st-occupied { background: #1e3932 !important; color: #ffffff; box-shadow: 0 10px 20px rgba(30, 57, 50, 0.2); }
+        .st-cleaning { background: #fff7ed !important; color: #c2410c; border: 1px solid #ffedd5; }
+        .admin-table-item:hover { transform: translateY(-8px); box-shadow: 0 15px 30px rgba(0,0,0,0.1); }
+        .zone-label { font-size: 10px; font-weight: 900; letter-spacing: 0.2em; text-transform: uppercase; color: #94a3b8; border-left: 4px solid #1e3932; padding-left: 12px; margin-bottom: 25px; }
+        
+        .custom-scroll::-webkit-scrollbar { width: 4px; }
+        .custom-scroll::-webkit-scrollbar-thumb { background: #1e3932; border-radius: 10px; }
+    </style>
+</head>
+<body class="flex">
+
+    <aside class="sidebar-floating shadow-2xl">
+    <div class="mb-8">
+        <img src="https://upload.wikimedia.org/wikipedia/en/d/d3/Starbucks_Corporation_Logo_2011.svg" class="w-9 bg-white p-1 rounded-xl shadow-sm">
+    </div>
+    <nav class="flex-1">
+        <div onclick="location.href='admin-dashboard.html'" class="nav-icon" id="nav-dash">
+            <i class="fa-solid fa-chart-pie"></i>
+            <span class="tooltip">Báo cáo</span>
+        </div>
+        <div onclick="location.href='admin-tables.html'" class="nav-icon" id="nav-tables">
+            <i class="fa-solid fa-layer-group"></i>
+            <span class="tooltip">Sơ đồ bàn</span>
+        </div>
+        <div onclick="location.href='admin-menu.html'" class="nav-icon" id="nav-menu">
+            <i class="fa-solid fa-mug-hot"></i>
+            <span class="tooltip">Thực đơn</span>
+        </div>
+        <div onclick="location.href='inventory.html'" class="nav-icon" id="nav-inv">
+            <i class="fa-solid fa-boxes-stacked"></i>
+            <span class="tooltip">Kho hàng</span>
+        </div>
+        <div onclick="location.href='hr.html'" class="nav-icon" id="nav-hr">
+            <i class="fa-solid fa-user-shield"></i>
+            <span class="tooltip">Nhân sự</span>
+        </div>
+        <div onclick="location.href='admin-settings.html'" class="nav-icon" id="nav-set">
+            <i class="fa-solid fa-gears"></i>
+            <span class="tooltip">Cài đặt</span>
+        </div>
+    </nav>
+    <button onclick="handleLogout()" class="nav-icon logout-btn mt-auto">
+        <i class="fa-solid fa-power-off"></i>
+        <span class="tooltip">Đăng xuất</span>
+    </button>
+</aside>
+
+    <header class="fixed right-5 flex justify-between items-center px-10 glass-header shadow-lg">
+        <div>
+            <p class="text-[9px] font-black tracking-[0.4em] text-gray-400 uppercase italic">Floor Architecture</p>
+            <h1 class="text-xl txt-black text-[#1e3932] dark:text-white">Thiết Lập Sơ Đồ Bàn</h1>
+        </div>
+        <div class="flex items-center gap-4">
+            <button onclick="uc01_CreateTable()" class="bg-[#1e3932] text-white px-6 py-2.5 rounded-2xl text-[10px] font-black uppercase shadow-lg hover:bg-black transition-all">
+                + Thêm bàn mới (UC01)
+            </button>
+            <div class="w-[1px] h-6 bg-gray-200 mx-2"></div>
+            <button onclick="toggleDarkMode()" class="w-10 h-10 bg-white dark:bg-white/10 rounded-xl flex items-center justify-center shadow-sm">
+                <i id="mode-icon" class="fa-solid fa-moon"></i>
+            </button>
+            <button onclick="handleLogout()" class="w-10 h-10 bg-red-50 text-red-500 rounded-xl hover:bg-red-500 hover:text-white transition-all flex items-center justify-center">
+                <i class="fa-solid fa-power-off text-xs"></i>
+            </button>
+        </div>
+    </header>
+
+    <main class="flex-1">
+        <div class="grid grid-cols-12 gap-6 mr-5">
+            <div class="col-span-12 lg:col-span-3 space-y-6">
+                <div class="bento-card p-6 shadow-sm">
+                    <h3 class="txt-black text-[11px] text-[#1e3932] dark:text-white mb-4">Tình Trạng Sơ Đồ</h3>
+                    <div class="h-[180px]"><canvas id="occupancyChart"></canvas></div>
+                </div>
+
+                <div class="bento-card p-6 bg-[#1e3932] text-white shadow-xl">
+                    <h4 class="text-[9px] font-black uppercase mb-4 text-green-400 italic flex items-center gap-2">
+                        <span class="w-2 h-2 bg-green-500 rounded-full animate-ping"></span> Live Audit Logs
+                    </h4>
+                    <div id="table-logs" class="space-y-3 max-h-60 overflow-y-auto text-[9px] font-medium pr-2 custom-scroll">
+                        <p class="opacity-40 italic">Đang chờ lệnh từ hệ thống...</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-span-12 lg:col-span-9">
+                <div class="bento-card p-10 min-h-[750px] shadow-sm">
+                    <div class="mb-12">
+                        <div class="zone-label">Premium VIP Lounge</div>
+                        <div class="grid grid-cols-4 md:grid-cols-6 lg:grid-cols-8 gap-8" id="vip-grid"></div>
+                    </div>
+
+                    <div>
+                        <div class="zone-label">Main Hall - Central Station</div>
+                        <div class="grid grid-cols-4 md:grid-cols-6 lg:grid-cols-8 gap-8" id="main-grid"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+   <script>
+    // --- 1. KHỞI TẠO DỮ LIỆU BẤT TỬ (LOCALSTORAGE) ---
+    const STORAGE_KEY = 'sb_admin_tables';
+    
+    // Nếu trong máy chưa có sơ đồ, tao tạo 28 bàn mẫu
+    const initialTables = [];
+    for(let i=1; i<=8; i++) initialTables.push({ id: i, name: `0${i}`, zone: 'VIP', status: 'st-empty', icon: 'fa-crown' });
+    for(let i=9; i<=28; i++) initialTables.push({ id: i, name: `${i}`, zone: 'Main', status: i%5==0 ? 'st-occupied' : 'st-empty', icon: 'fa-couch' });
+
+    // LẤY DỮ LIỆU: Lưu clj thì lấy ở đây
+    let tables = JSON.parse(localStorage.getItem(STORAGE_KEY)) || initialTables;
+
+    // --- 2. HÀM LƯU VÀ VẼ (CORE) ---
+    function saveAndRender() {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(tables)); // Lưu clj nó cũng lưu ở đây
+        
+        const vipGrid = document.getElementById('vip-grid');
+        const mainGrid = document.getElementById('main-grid');
+        
+        // Xóa sạch để vẽ lại
+        vipGrid.innerHTML = '';
+        mainGrid.innerHTML = '';
+
+        tables.forEach(t => {
+            const html = `
+                <div onclick="openAdminMenu(${t.id})" id="table-${t.id}" class="admin-table-item ${t.status}">
+                    <i class="fa-solid ${t.icon} text-[10px] mb-1"></i>
+                    <span class="text-[11px]">#${t.name}</span>
+                </div>`;
+            
+            if(t.zone === 'VIP') vipGrid.innerHTML += html;
+            else mainGrid.innerHTML += html;
+        });
+
+        updateChart(); // Cập nhật biểu đồ theo dữ liệu thật
+    }
+
+    // --- 3. UC01: THÊM BÀN MỚI ---
+    async function uc01_CreateTable() {
+    const { value: tableName } = await Swal.fire({
+        title: 'TẠO BÀN MỚI (UC01)',
+        input: 'text',
+        inputPlaceholder: 'Nhập số bàn...',
+        confirmButtonColor: '#1e3932',
+        preConfirm: (value) => {
+            if (!value) return Swal.showValidationMessage('Tên bàn không được để trống!');
+            // KIỂM TRA TRÙNG TÊN (AC01)
+            if (tables.find(t => t.name === value)) return Swal.showValidationMessage('Tên bàn này đã tồn tại!');
+            return value;
+        }
+    });
+    if (tableName) {
+        const newId = Date.now();
+        const newTable = { id: newId, name: tableName, zone: 'Main', status: 'st-empty', icon: 'fa-couch' };
+        tables.push(newTable);
+        
+        // GHI LOG VÀO HỆ THỐNG (TASK Ghi log)
+        let logs = JSON.parse(localStorage.getItem('sb_logs')) || [];
+        logs.push({ time: new Date().toLocaleTimeString(), partner: "Admin", action: `Tạo bàn mới #${tableName}` });
+        localStorage.setItem('sb_logs', JSON.stringify(logs));
+
+        pushLog(`Admin tạo bàn mới: #${tableName}`);
+        saveAndRender();
+    }
+}
+
+    // --- 4. UC02: SỬA THÔNG TIN BÀN ---
+    async function uc02_EditTable(id) {
+        const t = tables.find(item => item.id === id);
+        const { value: newName } = await Swal.fire({
+            title: 'SỬA TÊN BÀN (UC02)',
+            input: 'text',
+            inputValue: t.name,
+            confirmButtonColor: '#1e3932'
+        });
+        if (newName && newName !== t.name) {
+            pushLog(`Admin đổi tên bàn #${t.name} -> #${newName}`);
+            t.name = newName;
+            saveAndRender();
+        }
+    }
+
+    // --- 5. UC04: XÓA BÀN (CHẶN NẾU CÓ KHÁCH) ---
+    function uc04_DeleteTable(id) {
+        const t = tables.find(item => item.id === id);
+        
+        // Kiểm tra AC: Không cho xóa nếu bàn đang có khách
+        if (t.status === 'st-occupied') {
+            return Swal.fire('LỖI (AC04)', 'Bàn đang có khách, không được xóa!', 'error');
+        }
+
+        Swal.fire({
+            title: 'Xác nhận xóa?',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#d33'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                tables = tables.filter(item => item.id !== id);
+                pushLog(`Admin xóa bàn #${t.name}`);
+                saveAndRender();
+            }
+        });
+    }
+
+    // --- CÁC HÀM PHỤ TRỢ ---
+    function openAdminMenu(id) {
+        Swal.fire({
+            title: `<span class="txt-black text-sm">Quản lý bàn</span>`,
+            html: `
+                <div class="grid grid-cols-1 gap-3">
+                    <button onclick="uc02_EditTable(${id})" class="p-3 bg-gray-50 rounded-xl font-bold text-[10px] uppercase hover:bg-gray-100 transition-all">Sửa thông tin (UC02)</button>
+                    <button onclick="uc04_DeleteTable(${id})" class="p-3 bg-red-50 text-red-600 rounded-xl font-bold text-[10px] uppercase hover:bg-red-100 transition-all">Xóa bàn (UC04)</button>
+                </div>`,
+            showConfirmButton: false
+        });
+    }
+
+    function pushLog(msg) {
+        const logContainer = document.getElementById('table-logs');
+        const entry = document.createElement('p');
+        entry.className = "border-l-2 border-green-500 pl-2 animate-pulse mb-2";
+        entry.innerHTML = `<span class="text-green-400">[${new Date().toLocaleTimeString()}]</span> ${msg}`;
+        logContainer.prepend(entry);
+    }
+
+    function updateChart() {
+        const empty = tables.filter(t => t.status === 'st-empty').length;
+        const occupied = tables.filter(t => t.status === 'st-occupied').length;
+        const cleaning = tables.filter(t => t.status === 'st-cleaning').length;
+
+        // Reset chart cũ nếu có
+        const chartStatus = Chart.getChart("occupancyChart");
+        if (chartStatus) chartStatus.destroy();
+
+        const ctx = document.getElementById('occupancyChart').getContext('2d');
+        new Chart(ctx, {
+            type: 'doughnut',
+            data: {
+                labels: ['Trống', 'Có khách', 'Dọn'],
+                datasets: [{
+                    data: [empty, occupied, cleaning],
+                    backgroundColor: ['#f1f5f9', '#1e3932', '#cba258'],
+                    borderWidth: 0
+                }]
+            },
+            options: { cutout: '80%', plugins: { legend: { display: false } } }
+        });
+    }
+
+    function toggleDarkMode() { document.documentElement.classList.toggle('dark'); }
+
+    window.onload = saveAndRender;
+</script>
+</body>
+</html>

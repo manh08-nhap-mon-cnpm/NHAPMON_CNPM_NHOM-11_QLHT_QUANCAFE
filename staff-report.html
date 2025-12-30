@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+   <head>
+    <meta charset="UTF-8">
+    <title>Partner Session Report | Starbucks</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script>tailwind.config = { darkMode: 'class' }</script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;700;800&display=swap');
+        :root { --sb-forest: #1e3932; --sb-green: #007042; }
+        body { font-family: 'Plus Jakarta Sans', sans-serif; transition: 0.5s; background-color: #f0f2f5; }
+        .dark body { background-color: #0b1613; color: #d4e9e2; }
+
+        /* Sidebar Standard - Đồng bộ 100% các trang */
+        .sidebar-floating { background: var(--sb-forest); width: 70px; height: calc(100vh - 40px); position: fixed; top: 20px; left: 20px; border-radius: 35px; z-index: 100; display: flex; flex-direction: column; align-items: center; padding: 1.5rem 0; box-shadow: 0 20px 50px rgba(0,0,0,0.2); }
+        .nav-icon { width: 46px; height: 46px; display: flex; align-items: center; justify-content: center; border-radius: 16px; cursor: pointer; color: rgba(255, 255, 255, 0.3); transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1); margin-bottom: 0.8rem; position: relative; }
+        .nav-icon:hover, .active-page { background: rgba(255, 255, 255, 0.15); color: #fff; transform: scale(1.15); }
+        
+        /* Tooltip Logic - Ẩn chữ đi, chỉ hiện khi rê chuột */
+        .tooltip { position: absolute; left: 65px; background: var(--sb-forest); color: white; padding: 6px 12px; border-radius: 10px; font-size: 9px; font-weight: 800; text-transform: uppercase; white-space: nowrap; transform: scale(0); transition: 0.2s; z-index: 1000; pointer-events: none; border: 1px solid rgba(255,255,255,0.1); }
+        .nav-icon:hover .tooltip { transform: scale(1); }
+        
+        .logout-btn:hover { background: #ef4444 !important; color: white !important; box-shadow: 0 10px 20px rgba(239, 68, 68, 0.4); }
+
+        main { margin-left: 110px; padding: 110px 40px 40px 0; min-height: 100vh; }
+        .glass-header { background: rgba(255, 255, 255, 0.8); backdrop-filter: blur(15px); left: 110px; width: calc(100% - 130px); border-radius: 25px; top: 15px; height: 75px; z-index: 90; position: fixed; border: 1px solid rgba(0,0,0,0.05); }
+        .dark .glass-header { background: rgba(11, 22, 19, 0.8); border-color: rgba(255,255,255,0.05); }
+        .bento-card { border-radius: 35px; background: white; border: 1px solid rgba(0,0,0,0.03); transition: 0.4s; overflow: hidden; }
+        .txt-black { font-weight: 800; font-style: italic; text-transform: uppercase; }
+    </style>
+</head>
+<body class="flex">
+
+    <aside class="sidebar-floating shadow-2xl">
+        <div class="mb-8">
+            <img src="https://upload.wikimedia.org/wikipedia/en/d/d3/Starbucks_Corporation_Logo_2011.svg" class="w-9 bg-white p-1 rounded-xl shadow-sm">
+        </div>
+        <nav class="flex-1">
+            <div onclick="location.href='staff-dashboard.html'" class="nav-icon"><i class="fa-solid fa-house-user"></i><span class="tooltip">Dashboard</span></div>
+            <div onclick="location.href='staff-tables.html'" class="nav-icon"><i class="fa-solid fa-layer-group"></i><span class="tooltip">Phục vụ bàn</span></div>
+            <div onclick="location.href='staff-pos.html'" class="nav-icon"><i class="fa-solid fa-cash-register"></i><span class="tooltip">Bán hàng</span></div>
+            <div onclick="location.href='staff-crm.html'" class="nav-icon"><i class="fa-solid fa-user-tag"></i><span class="tooltip">Khách hàng</span></div>
+            <div onclick="location.href='staff-report.html'" class="nav-icon active-page"><i class="fa-solid fa-file-invoice-dollar"></i><span class="tooltip">Kết ca</span></div>
+        </nav>
+        <button onclick="handleLogout()" class="nav-icon logout-btn mt-auto"><i class="fa-solid fa-power-off"></i><span class="tooltip">Đăng xuất</span></button>
+    </aside>
+
+    <header class="glass-header flex justify-between items-center px-10 shadow-lg">
+        <div>
+            <h1 class="text-xl font-black italic uppercase tracking-tighter text-[#1e3932] dark:text-white">Shift Summary</h1>
+            <p class="text-[9px] font-black text-green-500 uppercase tracking-widest italic">Kết thúc & Đối soát ca làm (UC53)</p>
+        </div>
+        <button onclick="exportPDF()" class="bg-[#1e3932] text-white px-6 py-2.5 rounded-2xl text-[10px] font-black uppercase shadow-lg hover:bg-black transition">Xuất báo cáo PDF (UC43)</button>
+    </header>
+
+    <main class="grid grid-cols-12 gap-6 mr-5">
+        <div class="col-span-12 lg:col-span-4 bento-card p-8 bg-[#1e3932] text-white">
+            <p class="text-[10px] font-bold text-white/50 uppercase italic mb-2">Tổng doanh thu ca</p>
+            <h2 id="total-rev" class="text-4xl font-black italic mb-4">0đ</h2>
+            <div class="flex justify-between text-[10px] font-black uppercase border-t border-white/10 pt-4">
+                <span>Số đơn hàng:</span><span id="order-count">0</span>
+            </div>
+        </div>
+
+        <div class="col-span-12 lg:col-span-8 bento-card p-8">
+            <h3 class="txt-black text-xs text-gray-400 mb-6">Chi tiết đơn hàng trong ca (UC42)</h3>
+            <div class="overflow-y-auto max-h-80 pr-2 custom-scroll" id="session-orders">
+                </div>
+        </div>
+
+        <div class="col-span-12 bento-card p-10 border-l-8 border-amber-500">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-10">
+                <div>
+                    <h3 class="txt-black text-sm text-[#1e3932] mb-4">Đối soát tiền mặt (UC53)</h3>
+                    <p class="text-xs text-gray-500 mb-6">Nhập số tiền thực tế kiểm kê tại két để hệ thống so sánh với doanh thu trên máy.</p>
+                    <input type="number" id="cash-input" oninput="calculateGap()" placeholder="Nhập số tiền mặt (VNĐ)..." class="w-full p-4 bg-gray-50 rounded-2xl border-none focus:ring-2 ring-amber-500 font-bold text-lg">
+                </div>
+                <div class="bg-gray-50 p-8 rounded-[35px] flex flex-col justify-center">
+                    <div class="flex justify-between mb-2 text-[10px] font-black uppercase text-gray-400"><span>Chênh lệch:</span><span id="gap-val">0đ</span></div>
+                    <div id="gap-status" class="text-xs font-black uppercase italic text-green-600">Hệ thống cân bằng</div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        const currentUser = JSON.parse(localStorage.getItem('currentUser')) || { name: "Partner" };
+        let sessionOrders = [];
+
+        function loadSessionData() {
+            const logs = JSON.parse(localStorage.getItem('sb_logs')) || [];
+            // Lọc các đơn hàng do Partner này thực hiện trong ngày hôm nay
+            sessionOrders = logs.filter(l => l.partner === currentUser.name);
+            
+            const total = sessionOrders.reduce((sum, l) => sum + parseInt(l.total.replace(/\D/g,'')), 0);
+            document.getElementById('total-rev').innerText = total.toLocaleString() + 'đ';
+            document.getElementById('order-count').innerText = sessionOrders.length;
+
+            const list = document.getElementById('session-orders');
+            list.innerHTML = sessionOrders.map(o => `
+                <div class="flex justify-between items-center p-4 border-b border-black/5 hover:bg-gray-50 transition">
+                    <div>
+                        <p class="text-[10px] font-black uppercase">${o.action}</p>
+                        <p class="text-[8px] text-gray-400 font-bold uppercase">${o.time}</p>
+                    </div>
+                    <p class="text-xs font-black italic text-[#1e3932]">${o.total}</p>
+                </div>
+            `).join('') || '<p class="text-center py-10 opacity-30 italic">Chưa có dữ liệu giao dịch.</p>';
+        }
+
+        function calculateGap() {
+            const systemTotal = sessionOrders.reduce((sum, l) => sum + parseInt(l.total.replace(/\D/g,'')), 0);
+            const cash = parseInt(document.getElementById('cash-input').value) || 0;
+            const gap = cash - systemTotal;
+            
+            const gapElem = document.getElementById('gap-val');
+            const statusElem = document.getElementById('gap-status');
+            
+            gapElem.innerText = (gap > 0 ? '+' : '') + gap.toLocaleString() + 'đ';
+            
+            if(gap === 0) {
+                statusElem.innerText = "Hệ thống cân bằng";
+                statusElem.className = "text-xs font-black uppercase italic text-green-600";
+            } else {
+                statusElem.innerText = gap > 0 ? "Thừa tiền mặt" : "Thiếu tiền mặt";
+                statusElem.className = "text-xs font-black uppercase italic text-red-500";
+            }
+        }
+
+        function exportPDF() {
+            // UC43: Mô phỏng xuất báo cáo PDF
+            Swal.fire('Xuất báo cáo (UC43)', 'Báo cáo ca làm đã được lưu dưới dạng PDF và gửi tới Admin.', 'success');
+        }
+
+        function finalizeShiftUC53() {
+    // 1. Reset tất cả các bàn về trống (Dọn quán cuối ca)
+    let tables = JSON.parse(localStorage.getItem('sb_admin_tables')) || [];
+    tables.forEach(t => t.status = 'st-empty');
+    localStorage.setItem('sb_admin_tables', JSON.stringify(tables));
+    
+    // 2. Kích hoạt đồng bộ hóa cho Admin biết
+    localStorage.setItem('table_sync_trigger', Date.now());
+
+    Swal.fire('Thành công', 'Đã chốt ca, in báo cáo và dọn sạch sơ đồ bàn (UC53).', 'success')
+    .then(() => handleLogout());
+}
+
+// --- ĐỒNG BỘ LOGOUT (Xóa Session) ---
+function handleLogout() {
+    Swal.fire({
+        title: 'KẾT THÚC PHIÊN?',
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#ef4444',
+        confirmButtonText: 'ĐĂNG XUẤT'
+    }).then((res) => {
+        if(res.isConfirmed) {
+            localStorage.removeItem('currentUser'); // Xóa user để bảo mật
+            window.location.href = 'index.html'; 
+        }
+    });
+}
+
+// --- ĐỒNG BỘ DARK MODE REAL-TIME ---
+function updateThemeUI() {
+    const theme = localStorage.getItem('hub_theme') || 'light';
+    const isDark = theme === 'dark';
+    document.documentElement.classList.toggle('dark', isDark);
+    const icon = document.getElementById('t-icon');
+    if(icon) {
+        icon.className = isDark ? 'fa-solid fa-moon text-blue-400' : 'fa-solid fa-sun text-amber-500';
+    }
+}
+
+// Lắng nghe lệnh đổi màu từ các tab khác
+window.addEventListener('storage', (e) => {
+    if (e.key === 'hub_theme') updateThemeUI();
+});
+
+// Chạy khởi tạo theme ngay khi load trang
+window.addEventListener('DOMContentLoaded', updateThemeUI);
+
+        window.onload = () => {
+            const theme = localStorage.getItem('hub_theme') || 'light';
+            if(theme === 'dark') document.documentElement.classList.add('dark');
+            loadSessionData();
+        };
+    </script>
+</body>
+</html>

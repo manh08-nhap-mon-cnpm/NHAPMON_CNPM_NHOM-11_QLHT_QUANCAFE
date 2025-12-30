@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <title>Starbucks Ultimate POS | Full Menu Edition</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script>tailwind.config = { darkMode: 'class' }</script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;700;800&display=swap');
+        :root { --sb-forest: #1e3932; --sb-green: #007042; }
+        body { font-family: 'Plus Jakarta Sans', sans-serif; transition: 0.5s; background-color: #f0f2f5; }
+        .dark body { background-color: #0b1613; color: #d4e9e2; }
+
+        /* Sidebar Standard - Đồng bộ 100% */
+        .sidebar-floating { background: var(--sb-forest); width: 70px; height: calc(100vh - 40px); position: fixed; top: 20px; left: 20px; border-radius: 35px; z-index: 100; display: flex; flex-direction: column; align-items: center; padding: 1.5rem 0; box-shadow: 0 20px 50px rgba(0,0,0,0.2); }
+        .nav-icon { width: 46px; height: 46px; display: flex; align-items: center; justify-content: center; border-radius: 16px; cursor: pointer; color: rgba(255, 255, 255, 0.3); transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1); margin-bottom: 0.8rem; position: relative; }
+        .nav-icon:hover, .active-page { background: rgba(255, 255, 255, 0.15); color: #fff; transform: scale(1.15); }
+        
+        .tooltip { position: absolute; left: 65px; background: var(--sb-forest); color: white; padding: 6px 12px; border-radius: 10px; font-size: 9px; font-weight: 800; text-transform: uppercase; white-space: nowrap; transform: scale(0); transition: 0.2s; z-index: 1000; pointer-events: none; border: 1px solid rgba(255,255,255,0.1); }
+        .nav-icon:hover .tooltip { transform: scale(1); }
+        .logout-btn:hover { background: #ef4444 !important; color: white !important; box-shadow: 0 10px 20px rgba(239, 68, 68, 0.4); }
+
+        main { margin-left: 110px; padding: 110px 40px 40px 0; min-height: 100vh; }
+        .glass-header { background: rgba(255, 255, 255, 0.8); backdrop-filter: blur(15px); left: 110px; width: calc(100% - 130px); border-radius: 25px; top: 15px; height: 75px; z-index: 90; position: fixed; border: 1px solid rgba(0,0,0,0.05); }
+        .dark .glass-header { background: rgba(11, 22, 19, 0.8); border-color: rgba(255,255,255,0.05); }
+
+        .bento-card { border-radius: 35px; background: white; border: 1px solid rgba(0,0,0,0.03); transition: 0.4s; overflow: hidden; }
+        .dark .bento-card { background: rgba(255,255,255,0.03); border-color: rgba(255,255,255,0.05); }
+        
+        .cat-item { padding: 10px 20px; border-radius: 18px; font-size: 10px; font-weight: 800; text-transform: uppercase; cursor: pointer; border: 1px solid rgba(0,0,0,0.05); white-space: nowrap; transition: 0.3s; }
+        .cat-active { background: var(--sb-forest); color: white; border-color: transparent; }
+        .product-card { border-radius: 28px; transition: 0.3s; cursor: pointer; background: white; border: 1px solid rgba(0,0,0,0.03); display: flex; flex-direction: column; }
+        .product-card:hover { transform: translateY(-5px); box-shadow: 0 15px 35px rgba(0,0,0,0.05); }
+        .custom-scroll::-webkit-scrollbar { width: 4px; }
+        .custom-scroll::-webkit-scrollbar-thumb { background: var(--sb-green); border-radius: 10px; }
+        .txt-black { font-weight: 800; font-style: italic; text-transform: uppercase; }
+    </style>
+</head>
+<body class="flex overflow-hidden">
+
+    <aside class="sidebar-floating shadow-2xl">
+        <div class="mb-8">
+            <img src="https://upload.wikimedia.org/wikipedia/en/d/d3/Starbucks_Corporation_Logo_2011.svg" class="w-9 bg-white p-1 rounded-xl shadow-sm">
+        </div>
+        <nav class="flex-1">
+            <div onclick="location.href='staff-dashboard.html'" class="nav-icon"><i class="fa-solid fa-house-user"></i><span class="tooltip">Dashboard</span></div>
+            <div onclick="location.href='staff-tables.html'" class="nav-icon"><i class="fa-solid fa-layer-group"></i><span class="tooltip">Phục vụ bàn</span></div>
+            <div onclick="location.href='staff-pos.html'" class="nav-icon active-page"><i class="fa-solid fa-cash-register"></i><span class="tooltip">Bán hàng</span></div>
+            <div onclick="location.href='staff-crm.html'" class="nav-icon"><i class="fa-solid fa-user-tag"></i><span class="tooltip">Khách hàng</span></div>
+            <div onclick="location.href='staff-report.html'" class="nav-icon"><i class="fa-solid fa-file-invoice-dollar"></i><span class="tooltip">Kết ca</span></div>
+        </nav>
+        <button onclick="handleLogout()" class="nav-icon logout-btn mt-auto"><i class="fa-solid fa-power-off"></i><span class="tooltip">Đăng xuất</span></button>
+    </aside>
+
+    <header class="glass-header flex justify-between items-center px-10 shadow-lg">
+        <div>
+            <h1 class="text-xl font-black italic uppercase tracking-tighter text-[#1e3932] dark:text-white">Point of Sale</h1>
+            <p id="table-display" class="text-[9px] font-black text-green-500 uppercase tracking-widest italic">Order: Bàn #--</p>
+        </div>
+        <div class="flex items-center gap-4">
+            <input type="text" id="pos-search" oninput="renderProducts()" placeholder="TÌM MÓN (UC13)..." class="bg-gray-100 dark:bg-white/5 border-none rounded-2xl py-2 pl-4 text-[10px] font-black w-48 focus:ring-2 focus:ring-green-500 transition-all">
+            <button onclick="toggleTheme()" class="w-10 h-10 bento-card flex items-center justify-center shadow-sm"><i id="t-icon" class="fa-solid fa-sun text-amber-500"></i></button>
+            <p id="staff-name" class="text-xs font-black dark:text-white">Partner Station</p>
+        </div>
+    </header>
+
+    <main class="grid grid-cols-12 gap-6 mr-5 w-full">
+        <div class="col-span-12 lg:col-span-8 flex flex-col gap-6">
+            <div class="flex gap-2 overflow-x-auto no-scrollbar pb-2" id="category-bar"></div>
+            <div class="grid grid-cols-3 xl:grid-cols-4 gap-5 overflow-y-auto pr-2 h-[calc(100vh-230px)] custom-scroll" id="product-grid"></div>
+        </div>
+
+        <div class="col-span-12 lg:col-span-4 bento-card flex flex-col h-[calc(100vh-140px)] border-t-8 border-[#1e3932] shadow-2xl">
+            <div class="p-8 border-b border-black/5 bg-gray-50/50 dark:bg-white/5">
+                <div class="flex justify-between items-center mb-4">
+                    <h2 class="txt-black text-xs text-gray-400">Bill Summary</h2>
+                    <button onclick="clearCart()" class="text-red-400 hover:scale-110 transition"><i class="fa-solid fa-trash-can"></i></button>
+                </div>
+                <div onclick="selectCustomer()" class="bg-white dark:bg-white/5 p-4 rounded-[25px] border border-black/5 cursor-pointer hover:border-green-500/50 transition">
+                    <p class="text-[8px] font-black text-gray-400 uppercase tracking-widest mb-1 italic">Customer CRM</p>
+                    <p id="cust-name" class="text-[10px] font-black text-[#1e3932] dark:text-white uppercase italic">Chọn khách hàng...</p>
+                </div>
+            </div>
+
+            <div class="flex-1 overflow-y-auto p-6 space-y-4 custom-scroll" id="cart-content"></div>
+
+            <div class="p-8 bg-gray-50 dark:bg-white/5 border-t border-black/5">
+                <div class="space-y-2 mb-6">
+                    <div class="flex justify-between text-[10px] font-black text-gray-400 uppercase italic"><p>Subtotal:</p><p id="sub-total">0đ</p></div>
+                    <div onclick="applyDiscount()" class="flex justify-between text-[10px] font-black text-amber-600 uppercase italic cursor-pointer underline"><p>Discount:</p><p id="discount-amt">-0đ</p></div>
+                    <div class="flex justify-between items-center pt-2 border-t border-black/5"><p class="text-[10px] font-black text-gray-400 uppercase italic">Total:</p><p id="total-price" class="text-3xl font-black italic text-[#1e3932] dark:text-green-500">0đ</p></div>
+                </div>
+                <button onclick="handleUC19_Payment()" class="w-full py-5 bg-[#007042] text-white rounded-[25px] font-black uppercase text-xs shadow-xl active:scale-95 transition-all tracking-[0.2em]">COMPLETE PAYMENT</button>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        const products = [
+            { id: 1, name: "Brown Sugar Oatmilk Shaken", cat: "Espresso & Coffee", price: 100000, img: "https://coffeexplore.com/wp-content/uploads/2025/10/Hyperrealistic-Iced-Brown-Sugar-Oatmilk-Shaken-Espresso-in-a-Starbucks-cup-with-visible-layers-condensation-and-soft-bokeh-background.jpg", recipe:[{id:'RM01',qty:18},{id:'RM02',qty:250}] },
+            { id: 2, name: "Caramel Macchiato", cat: "Espresso & Coffee", price: 95000, img: "https://i.pinimg.com/736x/a9/77/f8/a977f804f4c03c9c3b2d8edd92d52680.jpg", recipe:[{id:'RM01',qty:18},{id:'RM02',qty:200}] },
+            { id: 3, name: "Vanilla Sweet Cream Cold Brew", cat: "Espresso & Coffee", price: 85000, img: "https://i.pinimg.com/1200x/fc/63/a8/fc63a86428d5e2a6b61f318eaade5283.jpg", recipe:[{id:'RM01',qty:15}] },
+            { id: 4, name: "Caffè Americano", cat: "Espresso & Coffee", price: 70000, img: "https://i.pinimg.com/736x/54/98/1f/54981f335c60e529c7ae4217961394f9.jpg", recipe:[{id:'RM01',qty:18}] },
+            { id: 5, name: "Cappuccino", cat: "Espresso & Coffee", price: 85000, img: "https://www.cukcuk.vn/wp-content/uploads/2024/09/cappucchino.jpg", recipe:[{id:'RM01',qty:18},{id:'RM02',qty:200}] },
+            { id: 6, name: "Caffè Mocha", cat: "Espresso & Coffee", price: 95000, img: "https://i.pinimg.com/1200x/79/0b/db/790bdb12316c973404c48708428fbdfd.jpg", recipe:[{id:'RM01',qty:18}] },
+            { id: 9, name: "Caramel Cream Frappuccino", cat: "Frappuccino", price: 110000, img: "https://coffeexplore.com/wp-content/uploads/2025/10/Magazine-quality-Caramel-Frappuccino-in-a-Starbucks-cup-topped-with-whipped-cream-and-caramel-drizzle-on-a-rustic-wooden-table-in-a-coffee-shop-setting.jpg", recipe:[{id:'RM01',qty:12}] },
+            { id: 10, name: "Green Tea Cream Frappe", cat: "Frappuccino", price: 120000, img: "https://spacet-release.s3.ap-southeast-1.amazonaws.com/img/blog/2024-05-21/undefined-10-664c687ea3e3200bc92c8a62.webp", recipe:[{id:'RM04',qty:20}] },
+            { id: 11, name: "Chocolate Chip Cream Frappe", cat: "Frappuccino", price: 120000, img: "https://www.cukcuk.vn/wp-content/uploads/2024/09/Frappuccino.png", recipe:[{id:'RM01',qty:12}] },
+            { id: 17, name: "Pure Matcha Espresso Fusion", cat: "Teavana", price: 90000, img: "https://thanhnien.mediacdn.vn/uploaded/tannhan/2016_09_16/icedmatchaespressofusion_SZEG.jpg?width=600", recipe:[{id:'RM04',qty:15},{id:'RM01',qty:12}] },
+            { id: 200, name: "Pure Matcha Latte", cat: "Teavana", price: 90000, img: "https://mms.img.susercontent.com/vn-11134517-820l4-me97w761crnnc5@resize_ss400x400!@crop_w400_h400_cT", recipe:[{id:'RM04',qty:20}] },
+            { id: 100, name: "Pate Chaud", cat: "Bakery", price: 45000, img: "https://en.starbucks.vn/media/ojjfykqo/pate-chaud_tcm89-24785_w1024_n.jpg", recipe:[{id:'RM05',qty:1}] },
+            { id: 101, name: "Almond Croissant", cat: "Bakery", price: 55000, img: "https://en.starbucks.vn/media/jpdj0sgh/almond-croissant_tcm89-24786_w1024_n.jpg", recipe:[{id:'RM06',qty:1}] },
+            { id: 102, name: "Raisin Rolls", cat: "Bakery", price: 45000, img: "https://en.starbucks.vn/media/0fjd2a4d/raisin-rolls_tcm89-24787_w1024_n.jpg", recipe:[{id:'RM07',qty:1}] },
+            { id: 103, name: "Apricot Danish", cat: "Bakery", price: 45000, img: "https://en.starbucks.vn/media/3oglqeq3/apricot-danish_tcm89-24788_w1024_n.jpg", recipe:[{id:'RM08',qty:1}] },
+            { id: 110, name: "Chocolate Muffin", cat: "Muffins", price: 55000, img: "https://en.starbucks.vn/media/k2znd13j/chocolate-muffin_tcm89-24807_w1024_n.jpg", recipe:[{id:'RM09',qty:1}] },
+            { id: 117, name: "Coffee Tiramisu", cat: "Dessert", price: 65000, img: "https://en.starbucks.vn/media/4usn4cce/coffee-tiramisu_tcm89-24820_w1024_n.jpg", recipe:[{id:'RM10',qty:1}] }
+        ];
+
+        let cart = []; let currentCat = "Tất cả"; let discountP = 0; let selectedCust = null;
+        let selectedTableId = localStorage.getItem('selected_table_id') || "05";
+
+        function renderCats() {
+            const bar = document.getElementById('category-bar');
+            const cats = ["Tất cả", "Espresso & Coffee", "Frappuccino", "Teavana", "Bakery", "Muffins", "Dessert"];
+            bar.innerHTML = cats.map(c => `<div onclick="currentCat='${c}';renderCats();renderProducts()" class="cat-item ${currentCat===c?'cat-active shadow-lg':'bg-white dark:bg-white/5 text-gray-400'}">${c}</div>`).join('');
+        }
+
+        function renderProducts() {
+            const search = document.getElementById('pos-search').value.toLowerCase();
+            const filtered = products.filter(p => (currentCat==="Tất cả"||p.cat===currentCat) && p.name.toLowerCase().includes(search));
+            document.getElementById('product-grid').innerHTML = filtered.map(p => `
+                <div onclick="addToCart(${p.id})" class="product-card p-3 animate-in fade-in duration-500">
+                    <img src="${p.img}" class="h-32 w-full object-cover rounded-[22px] mb-3">
+                    <h4 class="text-[9px] font-black italic uppercase px-1 line-clamp-2 h-8">${p.name}</h4>
+                    <p class="text-[10px] font-black text-green-600 px-1 mt-2 italic">${p.price.toLocaleString()}đ</p>
+                </div>
+            `).join('');
+        }
+
+        function addToCart(id) {
+            const p = products.find(x => x.id === id);
+            const exist = cart.find(x => x.id === id);
+            if(exist) exist.qty++; else cart.push({...p, qty: 1});
+            updateUI();
+        }
+
+        function updateUI() {
+            const list = document.getElementById('cart-content');
+            if(cart.length === 0) list.innerHTML = '<div class="text-center opacity-20 mt-20 italic text-[10px] font-black uppercase">Giỏ hàng trống</div>';
+            else list.innerHTML = cart.map(i => `
+                <div class="flex items-center gap-4 bg-white dark:bg-white/5 p-4 rounded-3xl border border-black/5 animate-slide-in-right">
+                    <img src="${i.img}" class="w-10 h-10 rounded-xl object-cover">
+                    <div class="flex-1">
+                        <h5 class="text-[9px] font-black uppercase italic truncate w-32">${i.name}</h5>
+                        <p class="text-[10px] font-black text-green-600 italic">${(i.price*i.qty).toLocaleString()}đ</p>
+                    </div>
+                    <div class="flex items-center gap-2 bg-gray-100 dark:bg-white/10 rounded-xl p-1">
+                        <button onclick="changeQty(${i.id},-1)" class="w-6 h-6 font-bold">-</button>
+                        <span class="text-[10px] font-black">${i.qty}</span>
+                        <button onclick="changeQty(${i.id},1)" class="w-6 h-6 font-bold">+</button>
+                    </div>
+                </div>
+            `).join('');
+            const sub = cart.reduce((s,i)=>s+(i.price*i.qty),0);
+            const disc = (sub * discountP) / 100;
+            document.getElementById('sub-total').innerText = sub.toLocaleString()+'đ';
+            document.getElementById('discount-amt').innerText = '-'+disc.toLocaleString()+'đ';
+            document.getElementById('total-price').innerText = (sub-disc).toLocaleString()+'đ';
+        }
+
+        function changeQty(id, d) {
+            const item = cart.find(x => x.id === id);
+            if(item) { item.qty += d; if(item.qty <= 0) cart = cart.filter(x => x.id !== id); }
+            updateUI();
+        }
+
+        function clearCart() { cart = []; discountP = 0; updateUI(); }
+
+        async function selectCustomer() {
+            const customers = JSON.parse(localStorage.getItem('sb_crm_data')) || [];
+            const options = {}; customers.forEach(c => options[c.id] = `${c.name} (${c.phone})`);
+            const { value: cid } = await Swal.fire({ title:'Chọn Partner (UC31)', input:'select', inputOptions: options });
+            if(cid) { 
+                selectedCust = customers.find(x => x.id == cid);
+                document.getElementById('cust-name').innerText = `${selectedCust.name} - ${selectedCust.rank}`;
+            }
+        }
+
+        async function applyDiscount() {
+            const { value: p } = await Swal.fire({ title:'Nhập % giảm giá (UC18)', input:'number', inputAttributes:{min:0, max:100} });
+            if(p) { discountP = parseInt(p); updateUI(); }
+        }
+        
+        async function handleUC19_Payment() {
+            if (cart.length === 0) return;
+            const { isConfirmed } = await Swal.fire({
+                title: 'XÁC NHẬN THANH TOÁN (UC19)',
+                text: 'Hệ thống sẽ trừ kho, tích điểm và dọn bàn.',
+                icon: 'question',
+                showCancelButton: true,
+                confirmButtonColor: '#007042'
+            });
+            if (isConfirmed) {
+                let inventory = JSON.parse(localStorage.getItem('starbucks_inv')) || [];
+                let canDeduct = true;
+                let missingItem = "";
+                cart.forEach(item => {
+                    item.recipe?.forEach(ing => {
+                        let invItem = inventory.find(i => i.id === ing.id);
+                        if (!invItem || invItem.stock < (ing.qty * item.qty)) {
+                            canDeduct = false;
+                            missingItem = invItem ? invItem.name : "Nguyên liệu";
+                        }
+                    });
+                });
+                if (!canDeduct) {
+                    Swal.fire('HẾT HÀNG (UC23)', `Không đủ ${missingItem} để làm đơn này!`, 'error');
+                    return;
+                }
+                cart.forEach(item => {
+                    item.recipe?.forEach(ing => {
+                        let invItem = inventory.find(i => i.id === ing.id);
+                        invItem.stock -= (ing.qty * item.qty);
+                        invItem.hasInvoice = true;
+                    });
+                });
+                localStorage.setItem('starbucks_inv', JSON.stringify(inventory));
+                const subTotal = cart.reduce((s, i) => s + (i.price * i.qty), 0);
+                if (selectedCust) {
+                    let customers = JSON.parse(localStorage.getItem('sb_crm_data')) || [];
+                    let currentCust = customers.find(c => c.id === selectedCust.id);
+                    if (currentCust) {
+                        currentCust.points += Math.floor(subTotal / 1000);
+                        if (currentCust.points >= 1000) currentCust.rank = "Gold";
+                        else if (currentCust.points >= 500) currentCust.rank = "Silver";
+                        localStorage.setItem('sb_crm_data', JSON.stringify(customers));
+                    }
+                }
+                let tables = JSON.parse(localStorage.getItem('sb_admin_tables')) || [];
+                let table = tables.find(t => t.name === selectedTableId);
+                if (table) {
+                    table.status = 'st-cleaning';
+                    localStorage.setItem('sb_admin_tables', JSON.stringify(tables));
+                    localStorage.setItem('table_sync_trigger', Date.now());
+                }
+                let logs = JSON.parse(localStorage.getItem('sb_logs')) || [];
+                const user = JSON.parse(localStorage.getItem('currentUser'));
+                logs.push({
+                    time: new Date().toLocaleTimeString(),
+                    partner: user ? user.name : "System",
+                    action: `Thanh toán Bàn #${selectedTableId}`,
+                    total: (subTotal - (subTotal * discountP / 100)).toLocaleString() + 'đ'
+                });
+                localStorage.setItem('sb_logs', JSON.stringify(logs));
+                Swal.fire('Hoàn tất!', 'Đã trừ kho, tích điểm và gửi lệnh dọn bàn.', 'success');
+                cart = []; updateUI();
+            }
+        }
+
+        function handleLogout() {
+            Swal.fire({
+                title: 'Kết thúc phiên?', icon: 'warning', showCancelButton: true, confirmButtonColor: '#ef4444', confirmButtonText: 'ĐĂNG XUẤT'
+            }).then((res) => {
+                if(res.isConfirmed) {
+                    localStorage.removeItem('currentUser');
+                    window.location.href = 'index.html';
+                }
+            });
+        }
+
+        function toggleTheme() {
+            const isDark = document.documentElement.classList.toggle('dark');
+            localStorage.setItem('hub_theme', isDark ? 'dark' : 'light');
+            updateThemeUI();
+        }
+
+        function updateThemeUI() {
+            const theme = localStorage.getItem('hub_theme') || 'light';
+            document.documentElement.classList.toggle('dark', theme === 'dark');
+            const icon = document.getElementById('t-icon');
+            if(icon) icon.className = theme === 'dark' ? 'fa-solid fa-moon text-blue-400' : 'fa-solid fa-sun text-amber-500';
+        }
+
+        window.onload = () => {
+            updateThemeUI();
+            const user = JSON.parse(localStorage.getItem('currentUser')) || { name: "Partner" };
+            document.getElementById('staff-name').innerText = user.name;
+            document.getElementById('table-display').innerText = `Order: Bàn #${selectedTableId}`;
+            renderCats(); renderProducts(); updateUI();
+        };
+    </script>
+</body>
+</html>
