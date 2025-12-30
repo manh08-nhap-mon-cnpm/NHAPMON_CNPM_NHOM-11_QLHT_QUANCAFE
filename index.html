@@ -2,7 +2,7 @@
 <html lang="vi">
 <head>
     <meta charset="UTF-8">
-    <title>Partner Hub | Sign In</title>
+    <title>Partner Hub | Security Sign In</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
@@ -10,127 +10,151 @@
         @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&display=swap');
         body { 
             font-family: 'Plus Jakarta Sans', sans-serif; 
-            background: linear-gradient(rgba(0,0,0,0.4), rgba(0,0,0,0.6)), 
+            background: linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.8)), 
                         url('https://www.cukcuk.vn/wp-content/uploads/2024/09/starbucks-coffee-1.png') center/cover no-repeat fixed;
             height: 100vh; display: flex; align-items: center; justify-content: center;
         }
         .mini-card {
             background: rgba(255, 255, 255, 0.08); backdrop-filter: blur(25px);
-            border: 1px solid rgba(255, 255, 255, 0.2); border-radius: 30px;
-            padding: 40px; width: 380px; text-align: center;
+            border: 1px solid rgba(255, 255, 255, 0.15); border-radius: 35px;
+            padding: 45px; width: 400px; text-align: center;
         }
-        input { background: rgba(255,255,255,0.1) !important; color: white !important; border: 1px solid rgba(255,255,255,0.2) !important; }
-        input::placeholder { color: rgba(255,255,255,0.5); }
+        input { background: rgba(255,255,255,0.1) !important; color: white !important; border: 1px solid rgba(255,255,255,0.1) !important; }
+        input:focus { border-color: #007042 !important; }
+        .btn-login { background: #007042; transition: 0.3s; }
+        .btn-login:hover { background: #1e3932; transform: translateY(-2px); }
     </style>
 </head>
 <body>
 
     <div class="mini-card shadow-2xl">
-        <div class="mb-6">
-            <img src="https://upload.wikimedia.org/wikipedia/en/d/d3/Starbucks_Corporation_Logo_2011.svg" class="w-20 mx-auto drop-shadow-lg">
-        </div>
-        
-        <h2 class="text-white text-2xl font-black mb-2 italic">STARBUCKS HUB</h2>
-        <p class="text-white/60 text-xs mb-8 tracking-widest uppercase font-bold">Internal Access Only</p>
+        <div class="mb-6"><img src="https://upload.wikimedia.org/wikipedia/en/d/d3/Starbucks_Corporation_Logo_2011.svg" class="w-20 mx-auto"></div>
+        <h2 class="text-white text-2xl font-black mb-1 italic">PARTNER HUB</h2>
+        <p class="text-white/40 text-[9px] mb-8 tracking-[0.4em] uppercase font-bold">Security & Authentication</p>
 
-        <div class="space-y-4">
+        <form onsubmit="event.preventDefault(); handleLogin();" class="space-y-4 text-left">
             <div class="relative">
-                <i class="fa-solid fa-user absolute left-4 top-4 text-white/40"></i>
-                <input id="u" type="text" placeholder="Partner Username" class="w-full pl-12 pr-4 py-3.5 rounded-2xl outline-none focus:ring-2 focus:ring-green-500 transition-all">
+                <i class="fa-solid fa-user absolute left-4 top-4 text-white/30"></i>
+                <input id="u" type="text" placeholder="Username" class="w-full pl-12 pr-4 py-3.5 rounded-2xl outline-none" required>
             </div>
             <div class="relative">
-                <i class="fa-solid fa-lock absolute left-4 top-4 text-white/40"></i>
-                <input id="p" type="password" placeholder="Password" class="w-full pl-12 pr-4 py-3.5 rounded-2xl outline-none focus:ring-2 focus:ring-green-500 transition-all">
+                <i class="fa-solid fa-lock absolute left-4 top-4 text-white/30"></i>
+                <input id="p" type="password" placeholder="Password" class="w-full pl-12 pr-4 py-3.5 rounded-2xl outline-none" required>
             </div>
-        </div>
+            
+            <div class="flex items-center justify-between mt-6 px-1">
+                <label class="flex items-center text-white/50 text-[11px] cursor-pointer">
+                    <input type="checkbox" id="rem" class="mr-2 rounded"> Ghi nhớ
+                </label>
+                <button type="button" onclick="handleForgotPassword()" class="text-green-400 text-[11px] font-bold hover:underline">Quên mật khẩu?</button>
+            </div>
 
-        <div class="flex items-center justify-between mt-6 px-2">
-            <label class="flex items-center text-white/70 text-xs cursor-pointer">
-                <input type="checkbox" id="rem" class="mr-2 rounded"> Ghi nhớ tôi
-            </label>
-            <a href="#" onclick="handleOTP()" class="text-green-400 text-xs font-bold hover:underline">Quên mật khẩu?</a>
-        </div>
-
-        <button onclick="handleLogin()" class="w-full bg-[#007042] hover:bg-[#1e3932] text-white font-black py-4 rounded-2xl mt-8 transition-all active:scale-95 shadow-lg">
-            ĐĂNG NHẬP HỆ THỐNG
-        </button>
-
-        <p class="text-white/30 text-[10px] mt-8 uppercase tracking-tighter">© 2024 Starbucks Coffee Company</p>
+            <button type="submit" class="w-full btn-login text-white font-black py-4 rounded-2xl mt-6 uppercase text-xs tracking-widest shadow-lg">
+                Đăng Nhập
+            </button>
+        </form>
     </div>
 
 <script>
+// 1. LOGIC ĐĂNG NHẬP (CÓ KHÓA SAU 3 LẦN SAI)
 function handleLogin() {
     const u = document.getElementById('u').value.trim();
     const p = document.getElementById('p').value.trim();
-    const rem = document.getElementById('rem').checked;
+    const remember = document.getElementById('rem').checked;
 
-    // 1. Lấy danh sách nhân sự từ HR
-    const staffList = JSON.parse(localStorage.getItem('sb_hr')) || [];
-    const user = staffList.find(x => x.username === u);
+    let staffList = JSON.parse(localStorage.getItem('sb_hr')) || [];
+    let userIndex = staffList.findIndex(x => x.username === u);
 
-    // 2. Kiểm tra tồn tại tài khoản
-    if (!user) {
-        Swal.fire({ icon: 'error', title: 'Lỗi', text: 'Tài khoản không tồn tại!', background: '#1e3932', color: '#fff' });
-        return;
+    if (userIndex === -1) {
+        return Swal.fire({ icon: 'error', title: 'LỖI', text: 'Tài khoản không tồn tại!', background: '#1e3932', color: '#fff' });
     }
 
-    // 3. Kiểm tra trạng thái khóa
+    let user = staffList[userIndex];
+
     if (user.status === 'Locked') {
-        Swal.fire({ icon: 'warning', title: 'Bị khóa', text: 'Tài khoản đã bị vô hiệu hóa!', background: '#1e3932', color: '#fff' });
-        return;
+        return Swal.fire({ 
+            icon: 'warning', 
+            title: 'TÀI KHOẢN BỊ KHÓA', 
+            text: 'Bạn đã nhập sai quá 3 lần. Hãy liên hệ Admin để mở khóa!', 
+            background: '#1e3932', color: '#fff' 
+        });
     }
 
-    // 4. Kiểm tra mật khẩu
     if (user.password === p) {
-        user.failed = 0;
+        user.failedAttempts = 0; // Reset số lần sai
         localStorage.setItem('sb_hr', JSON.stringify(staffList));
-        
-        // Lưu session người dùng hiện tại
-        localStorage.setItem('currentUser', JSON.stringify(user));
-        if (rem) localStorage.setItem('remembered_user', u);
+
+        if(remember) localStorage.setItem('remembered_user', u);
         else localStorage.removeItem('remembered_user');
 
-        Swal.fire({
-            title: 'Thành công!',
-            text: `Chào mừng Partner ${user.name} trở lại.`,
-            icon: 'success',
-            timer: 1000,
-            showConfirmButton: false,
-            background: '#1e3932',
-            color: '#fff'
-        }).then(() => {
-            // SỬA TẠI ĐÂY: Phân quyền dựa trên thuộc tính 'role' trong database HR
-            if (user.role === 'Admin') {
-                location.href = 'admin-dashboard.html'; // Admin thực thụ
-            } else {
-                location.href = 'staff-dashboard.html'; // Nhân viên (Staff)
-            }
-        });
+        localStorage.setItem('currentUser', JSON.stringify(user));
+        
+        Swal.fire({ title: 'Thành công!', text: `Chào Partner ${user.name}`, icon: 'success', timer: 1000, showConfirmButton: false, background: '#1e3932', color: '#fff' })
+        .then(() => location.href = (user.role === 'Admin' ? 'admin-dashboard.html' : 'staff-dashboard.html'));
     } else {
-        // Xử lý sai mật khẩu & tự động khóa tài khoản sau 3 lần
-        user.failed = (user.failed || 0) + 1;
-        if (user.failed >= 3) {
-            user.status = 'Locked';
-            Swal.fire({ icon: 'error', title: 'Bị khóa!', text: 'Sai 3 lần, tài khoản đã bị khóa!', background: '#1e3932', color: '#fff' });
+        user.failedAttempts = (user.failedAttempts || 0) + 1;
+        if (user.failedAttempts >= 3) {
+            user.status = 'Locked'; 
+            localStorage.setItem('sb_hr', JSON.stringify(staffList));
+            Swal.fire({ icon: 'error', title: 'BỊ CẤM', text: 'Sai 3 lần liên tiếp! Tài khoản đã bị khóa.', background: '#1e3932', color: '#fff' });
         } else {
-            Swal.fire({ icon: 'error', title: 'Sai mật khẩu', text: `Bạn còn ${3 - user.failed} lần thử.`, background: '#1e3932', color: '#fff' });
+            localStorage.setItem('sb_hr', JSON.stringify(staffList));
+            Swal.fire({ icon: 'error', title: 'SAI MK', text: `Còn ${3 - user.failedAttempts} lần thử!`, background: '#1e3932', color: '#fff' });
         }
-        localStorage.setItem('sb_hr', JSON.stringify(staffList));
     }
 }
 
-    function handleOTP() {
-        const code = Math.floor(1000 + Math.random() * 9000);
-        Swal.fire({ title: 'Security OTP', text: `Mã xác thực của bạn là: ${code}`, icon: 'info', background: '#1e3932', color: '#fff' });
+// 2. LOGIC QUÊN MẬT KHẨU (ĐÃ FIX)
+async function handleForgotPassword() {
+    const u = document.getElementById('u').value.trim();
+    if (!u) {
+        return Swal.fire({ icon: 'info', title: 'NHẬP USERNAME', text: 'Vui lòng điền Username vào ô trước khi bấm quên mật khẩu!', background: '#1e3932', color: '#fff' });
     }
 
-    window.onload = () => {
-        const s = localStorage.getItem('remembered_user');
-        if (s) {
-            document.getElementById('u').value = s;
-            document.getElementById('rem').checked = true;
+    let staffList = JSON.parse(localStorage.getItem('sb_hr')) || [];
+    let userIndex = staffList.findIndex(x => x.username === u);
+
+    if (userIndex === -1) {
+        return Swal.fire({ icon: 'error', title: 'LỖI', text: 'Username này không có trong hệ thống!', background: '#1e3932', color: '#fff' });
+    }
+
+    const otp = Math.floor(1000 + Math.random() * 9000);
+    const { value: typedOTP } = await Swal.fire({
+        title: 'MÃ XÁC THỰC',
+        text: `Mã OTP của Partner ${u} là: ${otp}`,
+        input: 'text',
+        background: '#1e3932', color: '#fff', confirmButtonColor: '#007042',
+        preConfirm: (v) => {
+            if (v != otp) return Swal.showValidationMessage('OTP sai!');
+            return v;
         }
-    };
+    });
+
+    if (typedOTP) {
+        const { value: newPass } = await Swal.fire({
+            title: 'MẬT KHẨU MỚI',
+            input: 'password',
+            inputPlaceholder: 'Nhập mật khẩu mới...',
+            background: '#1e3932', color: '#fff', confirmButtonColor: '#007042'
+        });
+
+        if (newPass) {
+            staffList[userIndex].password = newPass;
+            staffList[userIndex].status = 'Active'; // Tự động mở khóa luôn nếu đang bị khóa
+            staffList[userIndex].failedAttempts = 0;
+            localStorage.setItem('sb_hr', JSON.stringify(staffList));
+            Swal.fire({ icon: 'success', title: 'XONG!', text: 'Đã đổi mật khẩu thành công.', background: '#1e3932', color: '#fff' });
+        }
+    }
+}
+
+window.onload = () => {
+    const savedUser = localStorage.getItem('remembered_user');
+    if (savedUser) {
+        document.getElementById('u').value = savedUser;
+        document.getElementById('rem').checked = true;
+    }
+};
 </script>
 </body>
 </html>
