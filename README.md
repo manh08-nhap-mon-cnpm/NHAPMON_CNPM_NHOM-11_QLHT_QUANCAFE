@@ -62,7 +62,7 @@ pip install flask
 python main.
 ### Bước 5: Truy cập hệ thống
 Mở trình duyệt và truy cập:
-http://127.0.0.1:5000/login
+http://localhost:8000/index.html
 ### Bước 6: Tài khoản đăng nhập mẫu
 #### Admin:
 Tên đăng nhập: admin
